@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -27,7 +29,6 @@ class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _ChatScreenState createState() => _ChatScreenState();
 }
 
@@ -35,35 +36,42 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   List<Map<String, dynamic>> messages = [];
 
-  // Bus card creator function
+  //updates bus constructor to contain all data
   BusCard createBusCard({
-    required String name,
-    required String type,
-    required String departure,
-    required String arrival,
+    required String busName,
+    required String busType,
+    required String departureTime,
+    required String departureDate,
+    required String arrivalTime,
+    required String arrivalDate,
     required String duration,
-    required String star,
-    required String price,
+    required String finalPrice,
+    required String rating,
+    required String seatsAvailable,
     required String url,
   }) {
     return BusCard(
-      name: name,
-      type: type,
-      departure: departure,
-      arrival: arrival,
+      busName: busName,
+      busType: busType,
+      departureTime: departureTime,
+      departureDate: departureDate,
+      arrivalTime: arrivalTime,
+      arrivalDate: arrivalDate,
       duration: duration,
-      star: star,
-      price: price,
+      finalPrice: finalPrice,
+      rating: rating,
+      seatsAvailable: seatsAvailable,
       url: url,
     );
   }
 
+  /// Called when the send button is pressed.
   void _sendMessage() {
     if (_controller.text.isEmpty) return;
     setState(() {
       if (_controller.text.startsWith("bus")) {
-        String busName = _controller.text.substring(3).trim();
-        addBusCardToMessages(busName);
+        //bus input for testing purposes
+        addBusCardsToMessages();
       } else {
         messages.add({
           "type": "text",
@@ -80,22 +88,163 @@ class _ChatScreenState extends State<ChatScreen> {
     _controller.clear();
   }
 
-  void addBusCardToMessages(String busName) {
-    setState(() {
+  /// Loops over the JSON list and creates a BusCard for each bus.
+  void addBusCardsToMessages() {
+    //example for bus data
+    final List<Map<String, dynamic>> busDataList = [
+      {
+        "bus_name": "NueGo",
+        "bus_type": "AC Seater 2+2 Electric",
+        "departure_time": "11:30 PM",
+        "departure_date": "10 Feb",
+        "arrival_time": "05:05 AM",
+        "arrival_date": "11 Feb",
+        "duration": "05h 35m",
+        "final_price": "346",
+        "rating": "3.5",
+        "seats_available": "17",
+        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
+      },
+      {
+        "bus_name": "NueGo",
+        "bus_type": "AC Seater 2+2 Electric",
+        "departure_time": "09:30 AM",
+        "departure_date": "10 Feb",
+        "arrival_time": "03:20 PM",
+        "arrival_date": "10 Feb",
+        "duration": "05h 50m",
+        "final_price": "346",
+        "rating": "3.1",
+        "seats_available": "41",
+        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
+      },
+      {
+        "bus_name": "NueGo",
+        "bus_type": "AC Seater 2+2 Electric",
+        "departure_time": "11:50 PM",
+        "departure_date": "10 Feb",
+        "arrival_time": "06:05 AM",
+        "arrival_date": "11 Feb",
+        "duration": "06h 15m",
+        "final_price": "346",
+        "rating": "3.2",
+        "seats_available": "12",
+        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
+      },
+      {
+        "bus_name": "NueGo",
+        "bus_type": "AC Seater/Sleeper Electric",
+        "departure_time": "11:55 PM",
+        "departure_date": "10 Feb",
+        "arrival_time": "05:50 AM",
+        "arrival_date": "11 Feb",
+        "duration": "05h 55m",
+        "final_price": "354",
+        "rating": "3.1",
+        "seats_available": "12",
+        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
+      },
+      {
+        "bus_name": "NueGo",
+        "bus_type": "AC Seater/Sleeper 2+1 Bharat Benz",
+        "departure_time": "11:59 PM",
+        "departure_date": "10 Feb",
+        "arrival_time": "05:40 AM",
+        "arrival_date": "11 Feb",
+        "duration": "05h 41m",
+        "final_price": "399",
+        "rating": "4.6",
+        "seats_available": "10",
+        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
+      },
+      {
+        "bus_name": "NueGo",
+        "bus_type": "AC Seater 2+2 Electric",
+        "departure_time": "02:00 PM",
+        "departure_date": "10 Feb",
+        "arrival_time": "07:50 PM",
+        "arrival_date": "10 Feb",
+        "duration": "05h 50m",
+        "final_price": "346",
+        "rating": "2.8",
+        "seats_available": "19",
+        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
+      },
+      {
+        "bus_name": "NueGo",
+        "bus_type": "AC Seater 2+2 Electric",
+        "departure_time": "04:00 PM",
+        "departure_date": "10 Feb",
+        "arrival_time": "09:50 PM",
+        "arrival_date": "10 Feb",
+        "duration": "05h 50m",
+        "final_price": "346",
+        "rating": "2.8",
+        "seats_available": "11",
+        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
+      },
+      {
+        "bus_name": "NueGo",
+        "bus_type": "AC Seater 2+2 Electric",
+        "departure_time": "06:30 AM",
+        "departure_date": "10 Feb",
+        "arrival_time": "12:20 PM",
+        "arrival_date": "10 Feb",
+        "duration": "05h 50m",
+        "final_price": "342",
+        "rating": "3.2",
+        "seats_available": "12",
+        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
+      },
+      {
+        "bus_name": "NueGo",
+        "bus_type": "AC Seater 2+2 Electric",
+        "departure_time": "06:30 PM",
+        "departure_date": "10 Feb",
+        "arrival_time": "12:20 AM",
+        "arrival_date": "11 Feb",
+        "duration": "05h 50m",
+        "final_price": "346",
+        "rating": "2.9",
+        "seats_available": "14",
+        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
+      },
+      {
+        "bus_name": "NueGo",
+        "bus_type": "AC Seater 2+2 Electric",
+        "departure_time": "11:00 PM",
+        "departure_date": "10 Feb",
+        "arrival_time": "04:35 AM",
+        "arrival_date": "11 Feb",
+        "duration": "05h 35m",
+        "final_price": "346",
+        "rating": "3.6",
+        "seats_available": "20",
+        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
+      }
+    ];
+
+    // Loop through the list and add a BusCard message for each entry.
+    for (var busData in busDataList) {
+      final busCard = createBusCard(
+        busName: busData["bus_name"],
+        busType: busData["bus_type"],
+        departureTime: busData["departure_time"],
+        departureDate: busData["departure_date"],
+        arrivalTime: busData["arrival_time"],
+        arrivalDate: busData["arrival_date"],
+        duration: busData["duration"],
+        finalPrice: busData["final_price"],
+        rating: busData["rating"],
+        seatsAvailable: busData["seats_available"],
+        url: busData["url"],
+      );
+
       messages.add({
         "type": "bus",
-        "data": createBusCard(
-          name: busName,
-          type: "AC Sleeper",
-          departure: "7:00 AM",
-          arrival: "10:00 AM",
-          duration: "3h",
-          star: "4.8",
-          price: "\$25",
-          url: "https://www.google.com", // URL to redirect
-        )
+        "data": busCard,
       });
-    });
+    }
   }
 
   @override
@@ -138,7 +287,6 @@ class _ChatScreenState extends State<ChatScreen> {
                     ).animate().fade(duration: 500.ms).slideY(),
                   );
                 } else if (msg["type"] == "bus") {
-                  // Here, we assume msg["data"] is a BusCard widget.
                   final busCard = msg["data"] as BusCard;
                   return Align(
                     alignment: Alignment.centerLeft,
@@ -187,24 +335,30 @@ class _ChatScreenState extends State<ChatScreen> {
 }
 
 class BusCard extends StatelessWidget {
-  final String name;
-  final String type;
-  final String departure;
-  final String arrival;
+  final String busName;
+  final String busType;
+  final String departureTime;
+  final String departureDate;
+  final String arrivalTime;
+  final String arrivalDate;
   final String duration;
-  final String star;
-  final String price;
+  final String finalPrice;
+  final String rating;
+  final String seatsAvailable;
   final String url;
 
   const BusCard({
     super.key,
-    required this.name,
-    required this.type,
-    required this.departure,
-    required this.arrival,
+    required this.busName,
+    required this.busType,
+    required this.departureTime,
+    required this.departureDate,
+    required this.arrivalTime,
+    required this.arrivalDate,
     required this.duration,
-    required this.star,
-    required this.price,
+    required this.finalPrice,
+    required this.rating,
+    required this.seatsAvailable,
     required this.url,
   });
 
@@ -233,53 +387,93 @@ class BusCard extends StatelessWidget {
             color: Colors.grey[850],
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Bus details on the left
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              // Bus name and type.
+              Text(
+                busName,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              Text(
+                busType,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[400],
+                ),
+              ),
+              SizedBox(height: 10),
+              // Departure and Arrival information.
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    name,
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Departure",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        "$departureTime, $departureDate",
+                        style: TextStyle(color: Colors.grey[400]),
+                      ),
+                    ],
                   ),
-                  Text(
-                    type,
-                    style: TextStyle(fontSize: 14, color: Colors.grey[400]),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    "$departure → $arrival",
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        "Arrival",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        "$arrivalTime, $arrivalDate",
+                        style: TextStyle(color: Colors.grey[400]),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              // Additional info on the right
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+              SizedBox(height: 10),
+              // Duration, rating, seats available, and price.
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    duration,
-                    style: TextStyle(fontSize: 14, color: Colors.grey[400]),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    "⭐ $star",
-                    style: TextStyle(fontSize: 14, color: Colors.white),
+                    "Duration: $duration",
+                    style: TextStyle(color: Colors.white),
                   ),
                   Text(
-                    price,
+                    "Rating: $rating",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+              SizedBox(height: 5),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Seats: $seatsAvailable",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  Text(
+                    "Price: \$$finalPrice",
                     style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ],
               ),
