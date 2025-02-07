@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  flutter_animate: ^4.2.0  # Added for animations
+  flutter_animate: ^4.2.0  # For animations
 
 dev_dependencies:
   flutter_test:
