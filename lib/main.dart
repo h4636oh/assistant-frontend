@@ -32,59 +32,76 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
-  List<Map<String, dynamic>> messages = [
-    {
-      "type": "bus",
-      "data": {
-        "name": "Bus A",
-        "type": "AC Sleeper",
-        "departure": "10:00 AM",
-        "arrival": "2:00 PM",
-        "duration": "4h",
-        "star": "4.5",
-        "price": "\$20"
-      }
-    },
-    {
-      "type": "bus",
-      "data": {
-        "name": "Bus B",
-        "type": "Non-AC",
-        "departure": "11:00 AM",
-        "arrival": "3:30 PM",
-        "duration": "4.5h",
-        "star": "4.0",
-        "price": "\$18"
-      }
-    },
-    {
-      "type": "bus",
-      "data": {
-        "name": "Bus C",
-        "type": "AC Semi-Sleeper",
-        "departure": "1:00 PM",
-        "arrival": "5:00 PM",
-        "duration": "4h",
-        "star": "4.7",
-        "price": "\$22"
-      }
-    }
-  ];
+  List<Map<String, dynamic>> messages = [];
+
+  //Bus card creator function
+  BusCard createBusCard({
+    required String name,
+    required String type,
+    required String departure,
+    required String arrival,
+    required String duration,
+    required String star,
+    required String price,
+  }) {
+    return BusCard(
+      name: name,
+      type: type,
+      departure: departure,
+      arrival: arrival,
+      duration: duration,
+      star: star,
+      price: price,
+    );
+  }
 
   void _sendMessage() {
     if (_controller.text.isEmpty) return;
     setState(() {
-      messages.add({"type": "text", "text": _controller.text, "sender": "user"});
-      messages.add({"type": "text", "text": "This is a placeholder response.", "sender": "bot"});
+      if (_controller.text.startsWith("bus")) {
+        String busName = _controller.text.substring(3).trim();
+        addBusCardToMessages(busName);
+      } else {
+        messages.add({
+          "type": "text",
+          "text": _controller.text,
+          "sender": "user",
+        });
+        messages.add({
+          "type": "text",
+          "text": "This is a placeholder response.",
+          "sender": "bot",
+        });
+      }
     });
     _controller.clear();
+  }
+
+  void addBusCardToMessages(String busName) {
+    setState(() {
+      messages.add({
+        "type": "bus",
+        "data": createBusCard(
+          name: busName,
+          type: "AC Sleeper",
+          departure: "7:00 AM",
+          arrival: "10:00 AM",
+          duration: "3h",
+          star: "4.8",
+          price: "\$25",
+        )
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Assistant", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          "Assistant",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
         backgroundColor: Colors.blueAccent,
         leading: Icon(Icons.chat_bubble, color: Colors.white),
@@ -97,10 +114,12 @@ class _ChatScreenState extends State<ChatScreen> {
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 final msg = messages[index];
+
                 if (msg["type"] == "text") {
                   bool isUser = msg["sender"] == "user";
                   return Align(
-                    alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+                    alignment:
+                        isUser ? Alignment.centerRight : Alignment.centerLeft,
                     child: Container(
                       margin: EdgeInsets.symmetric(vertical: 4),
                       padding: EdgeInsets.all(12),
@@ -109,24 +128,17 @@ class _ChatScreenState extends State<ChatScreen> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(
-                        msg["text"]!,
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        msg["text"],
+                        style: TextStyle(color: Colors.white, fontSize: 20),
                       ),
                     ).animate().fade(duration: 500.ms).slideY(),
                   );
                 } else if (msg["type"] == "bus") {
-                  final bus = msg["data"];
+                  // Here, we assume msg["data"] is a BusCard widget.
+                  final busCard = msg["data"] as BusCard;
                   return Align(
                     alignment: Alignment.centerLeft,
-                    child: BusCard(
-                      name: bus["name"],
-                      type: bus["type"],
-                      departure: bus["departure"],
-                      arrival: bus["arrival"],
-                      duration: bus["duration"],
-                      star: bus["star"],
-                      price: bus["price"],
-                    ),
+                    child: busCard,
                   );
                 }
                 return SizedBox.shrink();
@@ -157,7 +169,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 FloatingActionButton(
                   backgroundColor: Colors.blueAccent,
                   onPressed: _sendMessage,
-                  child: Icon(Icons.send, color: Colors.white).animate().scale(duration: 200.ms),
+                  child: Icon(Icons.send, color: Colors.white)
+                      .animate()
+                      .scale(duration: 200.ms),
                 ),
               ],
             ),
@@ -177,7 +191,8 @@ class BusCard extends StatelessWidget {
   final String star;
   final String price;
 
-  const BusCard({super.key, 
+  const BusCard({
+    super.key,
     required this.name,
     required this.type,
     required this.departure,
@@ -204,26 +219,51 @@ class BusCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // Bus details on the left
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   name,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
-                Text(type, style: TextStyle(fontSize: 14, color: Colors.grey[400])),
+                Text(
+                  type,
+                  style: TextStyle(fontSize: 14, color: Colors.grey[400]),
+                ),
                 SizedBox(height: 10),
-                Text("$departure → $arrival",
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white)),
+                Text(
+                  "$departure → $arrival",
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white),
+                ),
               ],
             ),
+            // Additional info on the right
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(duration, style: TextStyle(fontSize: 14, color: Colors.grey[400])),
+                Text(
+                  duration,
+                  style: TextStyle(fontSize: 14, color: Colors.grey[400]),
+                ),
                 SizedBox(height: 10),
-                Text("⭐ $star", style: TextStyle(fontSize: 14, color: Colors.white)),
-                Text(price, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                Text(
+                  "⭐ $star",
+                  style: TextStyle(fontSize: 14, color: Colors.white),
+                ),
+                Text(
+                  price,
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
               ],
             ),
           ],
