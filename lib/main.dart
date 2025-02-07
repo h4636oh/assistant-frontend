@@ -552,7 +552,7 @@ class AirplaneCard extends StatelessWidget {
           builder: (BuildContext dialogContext) {
             return AlertDialog(
               title: Text("Confirmation"),
-              content: Text("Do you want to proceed to the bus website?"),
+              content: Text("Do you want to proceed to the airplane website?"),
               actions: [
                 TextButton(
                   onPressed: () {
