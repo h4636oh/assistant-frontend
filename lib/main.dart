@@ -34,9 +34,11 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
+  // Add a FocusNode to keep track of the TextField's focus.
+  final FocusNode _focusNode = FocusNode();
   List<Map<String, dynamic>> messages = [];
 
-  //updates bus constructor to contain all data
+  // Updates bus constructor to contain all data
   BusCard createBusCard({
     required String busName,
     required String busType,
@@ -65,12 +67,12 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  /// Called when the send button is pressed.
+  /// Called when the send button is pressed or Enter is hit.
   void _sendMessage() {
     if (_controller.text.isEmpty) return;
     setState(() {
       if (_controller.text.startsWith("bus")) {
-        //bus input for testing purposes
+        // Bus input for testing purposes
         addBusCardsToMessages();
       } else {
         messages.add({
@@ -86,11 +88,13 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     });
     _controller.clear();
+    //cursor stays in chat box
+    _focusNode.requestFocus();
   }
 
   /// Loops over the JSON list and creates a BusCard for each bus.
   void addBusCardsToMessages() {
-    //example for bus data
+    // Example bus data list.
     final List<Map<String, dynamic>> busDataList = [
       {
         "bus_name": "NueGo",
@@ -224,7 +228,6 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     ];
 
-    // Loop through the list and add a BusCard message for each entry.
     for (var busData in busDataList) {
       final busCard = createBusCard(
         busName: busData["bus_name"],
@@ -304,7 +307,10 @@ class _ChatScreenState extends State<ChatScreen> {
                 Expanded(
                   child: TextField(
                     controller: _controller,
+                    focusNode: _focusNode,
                     style: TextStyle(color: Colors.white),
+                    onSubmitted: (value) => _sendMessage(),
+                    textInputAction: TextInputAction.send,
                     decoration: InputDecoration(
                       hintText: "Ask something...",
                       hintStyle: TextStyle(color: Colors.grey),
@@ -362,7 +368,8 @@ class BusCard extends StatelessWidget {
     required this.url,
   });
 
-  void _launchUrl() async {
+  // Private method to launch the URL.
+  Future<void> _launchUrl() async {
     final Uri uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
@@ -374,7 +381,36 @@ class BusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _launchUrl,
+      //added confirmation
+      onTap: () {
+        showDialog<bool>(
+          context: context,
+          builder: (BuildContext dialogContext) {
+            return AlertDialog(
+              title: Text("Confirmation"),
+              content: Text("Do you want to proceed to the bus website?"),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop(false);
+                  },
+                  child: Text("Back"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop(true);
+                  },
+                  child: Text("Ok"),
+                ),
+              ],
+            );
+          },
+        ).then((confirmed) {
+          if (confirmed == true) {
+            _launchUrl();
+          }
+        });
+      },
       child: Card(
         margin: EdgeInsets.symmetric(vertical: 8),
         elevation: 4,
