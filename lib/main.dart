@@ -67,19 +67,48 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  AirplaneCard createAirplaneCard({
+    required String planeName,
+    required String planeType,
+    required String departureTime,
+    required String departureDate,
+    required String arrivalTime,
+    required String arrivalDate,
+    required String duration,
+    required String finalPrice,
+    required String nonstop,
+    required String seatsAvailable,
+    required String url,
+  }) {
+    return AirplaneCard(
+      planeName: planeName,
+      planeType: planeType,
+      departureTime: departureTime,
+      departureDate: departureDate,
+      arrivalTime: arrivalTime,
+      arrivalDate: arrivalDate,
+      duration: duration,
+      finalPrice: finalPrice,
+      nonstop: nonstop,
+      seatsAvailable: seatsAvailable,
+      url: url,
+    );
+  }
+
   /// Called when the send button is pressed or Enter is hit.
   void _sendMessage() {
     if (_controller.text.isEmpty) return;
     setState(() {
+      messages.add({
+        "type": "text",
+        "text": _controller.text,
+        "sender": "user",
+      });
       if (_controller.text.startsWith("bus")) {
-        // Bus input for testing purposes
         addBusCardsToMessages();
+      } else if (_controller.text.startsWith("airplane")) {
+        addAirplaneCardsToMessages();
       } else {
-        messages.add({
-          "type": "text",
-          "text": _controller.text,
-          "sender": "user",
-        });
         messages.add({
           "type": "text",
           "text": "This is a placeholder response.",
@@ -107,110 +136,6 @@ class _ChatScreenState extends State<ChatScreen> {
         "final_price": "346",
         "rating": "3.5",
         "seats_available": "17",
-        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
-      },
-      {
-        "bus_name": "NueGo",
-        "bus_type": "AC Seater 2+2 Electric",
-        "departure_time": "09:30 AM",
-        "departure_date": "10 Feb",
-        "arrival_time": "03:20 PM",
-        "arrival_date": "10 Feb",
-        "duration": "05h 50m",
-        "final_price": "346",
-        "rating": "3.1",
-        "seats_available": "41",
-        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
-      },
-      {
-        "bus_name": "NueGo",
-        "bus_type": "AC Seater 2+2 Electric",
-        "departure_time": "11:50 PM",
-        "departure_date": "10 Feb",
-        "arrival_time": "06:05 AM",
-        "arrival_date": "11 Feb",
-        "duration": "06h 15m",
-        "final_price": "346",
-        "rating": "3.2",
-        "seats_available": "12",
-        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
-      },
-      {
-        "bus_name": "NueGo",
-        "bus_type": "AC Seater/Sleeper Electric",
-        "departure_time": "11:55 PM",
-        "departure_date": "10 Feb",
-        "arrival_time": "05:50 AM",
-        "arrival_date": "11 Feb",
-        "duration": "05h 55m",
-        "final_price": "354",
-        "rating": "3.1",
-        "seats_available": "12",
-        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
-      },
-      {
-        "bus_name": "NueGo",
-        "bus_type": "AC Seater/Sleeper 2+1 Bharat Benz",
-        "departure_time": "11:59 PM",
-        "departure_date": "10 Feb",
-        "arrival_time": "05:40 AM",
-        "arrival_date": "11 Feb",
-        "duration": "05h 41m",
-        "final_price": "399",
-        "rating": "4.6",
-        "seats_available": "10",
-        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
-      },
-      {
-        "bus_name": "NueGo",
-        "bus_type": "AC Seater 2+2 Electric",
-        "departure_time": "02:00 PM",
-        "departure_date": "10 Feb",
-        "arrival_time": "07:50 PM",
-        "arrival_date": "10 Feb",
-        "duration": "05h 50m",
-        "final_price": "346",
-        "rating": "2.8",
-        "seats_available": "19",
-        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
-      },
-      {
-        "bus_name": "NueGo",
-        "bus_type": "AC Seater 2+2 Electric",
-        "departure_time": "04:00 PM",
-        "departure_date": "10 Feb",
-        "arrival_time": "09:50 PM",
-        "arrival_date": "10 Feb",
-        "duration": "05h 50m",
-        "final_price": "346",
-        "rating": "2.8",
-        "seats_available": "11",
-        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
-      },
-      {
-        "bus_name": "NueGo",
-        "bus_type": "AC Seater 2+2 Electric",
-        "departure_time": "06:30 AM",
-        "departure_date": "10 Feb",
-        "arrival_time": "12:20 PM",
-        "arrival_date": "10 Feb",
-        "duration": "05h 50m",
-        "final_price": "342",
-        "rating": "3.2",
-        "seats_available": "12",
-        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
-      },
-      {
-        "bus_name": "NueGo",
-        "bus_type": "AC Seater 2+2 Electric",
-        "departure_time": "06:30 PM",
-        "departure_date": "10 Feb",
-        "arrival_time": "12:20 AM",
-        "arrival_date": "11 Feb",
-        "duration": "05h 50m",
-        "final_price": "346",
-        "rating": "2.9",
-        "seats_available": "14",
         "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
       },
       {
@@ -246,6 +171,58 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "bus",
         "data": busCard,
+      });
+    }
+  }
+
+  void addAirplaneCardsToMessages() {
+    final List<Map<String, dynamic>> airplaneDataList = [
+      {
+        "plane_name": "IndiGo",
+        "plane_type": "Economy",
+        "departure_time": "06:05",
+        "departure_date": "10 Feb",
+        "arrival_time": "07:35",
+        "arrival_date": "10 Feb",
+        "duration": "01h 30m",
+        "final_price": "1,516",
+        "nonstop": "Non Stop",
+        "seats_available": "20",
+        "url": "https://www.goindigo.in/flight-status.html"
+      },
+      {
+        "plane_name": "Emirates",
+        "plane_type": "Boeing 747",
+        "departure_time": "10:30 AM",
+        "departure_date": "15 Mar",
+        "arrival_time": "01:45 PM",
+        "arrival_date": "15 Mar",
+        "duration": "03h 15m",
+        "final_price": "750",
+        "nonstop": "Yes",
+        "seats_available": "45",
+        "url": "https://tickets.example.com/flight/search/NewYork/LosAngeles/2025-03-15/1"
+      }
+    ];
+
+    for (var airplaneData in airplaneDataList) {
+      final airplaneCard = createAirplaneCard(
+        planeName: airplaneData["plane_name"],
+        planeType: airplaneData["plane_type"],
+        departureTime: airplaneData["departure_time"],
+        departureDate: airplaneData["departure_date"],
+        arrivalTime: airplaneData["arrival_time"],
+        arrivalDate: airplaneData["arrival_date"],
+        duration: airplaneData["duration"],
+        finalPrice: airplaneData["final_price"],
+        nonstop: airplaneData["nonstop"],
+        seatsAvailable: airplaneData["seats_available"],
+        url: airplaneData["url"],
+      );
+
+      messages.add({
+        "type": "airplane",
+        "data": airplaneCard,
       });
     }
   }
@@ -294,6 +271,12 @@ class _ChatScreenState extends State<ChatScreen> {
                   return Align(
                     alignment: Alignment.centerLeft,
                     child: busCard,
+                  );
+                } else if (msg["type"] == "airplane") {
+                  final airplaneCard = msg["data"] as AirplaneCard;
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: airplaneCard,
                   );
                 }
                 return SizedBox.shrink();
@@ -369,14 +352,14 @@ class BusCard extends StatelessWidget {
   });
 
   // Private method to launch the URL.
-Future<void> _launchUrl() async {
-  final Uri uri = Uri.parse(url);
-  if (await canLaunchUrl(uri)) {
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
-  } else {
-    debugPrint("Could not launch $url");
+  Future<void> _launchUrl() async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      debugPrint("Could not launch $url");
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -505,7 +488,188 @@ Future<void> _launchUrl() async {
                     style: TextStyle(color: Colors.white),
                   ),
                   Text(
-                    "Price: \$$finalPrice",
+                    "Price: ₹$finalPrice",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ).animate().fade(duration: 500.ms).slideY(),
+    );
+  }
+}
+
+class AirplaneCard extends StatelessWidget {
+  final String planeName;
+  final String planeType;
+  final String departureTime;
+  final String departureDate;
+  final String arrivalTime;
+  final String arrivalDate;
+  final String duration;
+  final String finalPrice;
+  final String nonstop;
+  final String seatsAvailable;
+  final String url;
+
+  const AirplaneCard({
+    super.key,
+    required this.planeName,
+    required this.planeType,
+    required this.departureTime,
+    required this.departureDate,
+    required this.arrivalTime,
+    required this.arrivalDate,
+    required this.duration,
+    required this.finalPrice,
+    required this.nonstop,
+    required this.seatsAvailable,
+    required this.url,
+  });
+
+  // Private method to launch the URL.
+  Future<void> _launchUrl() async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      debugPrint("Could not launch $url");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      //added confirmation
+      onTap: () {
+        showDialog<bool>(
+          context: context,
+          builder: (BuildContext dialogContext) {
+            return AlertDialog(
+              title: Text("Confirmation"),
+              content: Text("Do you want to proceed to the bus website?"),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop(false);
+                  },
+                  child: Text("Back"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop(true);
+                  },
+                  child: Text("Ok"),
+                ),
+              ],
+            );
+          },
+        ).then((confirmed) {
+          if (confirmed == true) {
+            _launchUrl();
+          }
+        });
+      },
+      child: Card(
+        margin: EdgeInsets.symmetric(vertical: 8),
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Container(
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.grey[850],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Bus name and type.
+              Text(
+                planeName,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              Text(
+                planeType,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[400],
+                ),
+              ),
+              SizedBox(height: 10),
+              // Departure and Arrival information.
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Departure",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        "$departureTime, $departureDate",
+                        style: TextStyle(color: Colors.grey[400]),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        "Arrival",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        "$arrivalTime, $arrivalDate",
+                        style: TextStyle(color: Colors.grey[400]),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              // Duration, rating, seats available, and price.
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Duration: $duration",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  Text(
+                    "Nonestop: $nonstop",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+              SizedBox(height: 5),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Seats: $seatsAvailable",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  Text(
+                    "Price: ₹$finalPrice",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
