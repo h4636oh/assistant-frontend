@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(ChatApp());
@@ -34,7 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   List<Map<String, dynamic>> messages = [];
 
-  //Bus card creator function
+  // Bus card creator function
   BusCard createBusCard({
     required String name,
     required String type,
@@ -43,6 +44,7 @@ class _ChatScreenState extends State<ChatScreen> {
     required String duration,
     required String star,
     required String price,
+    required String url,
   }) {
     return BusCard(
       name: name,
@@ -52,6 +54,7 @@ class _ChatScreenState extends State<ChatScreen> {
       duration: duration,
       star: star,
       price: price,
+      url: url,
     );
   }
 
@@ -89,6 +92,7 @@ class _ChatScreenState extends State<ChatScreen> {
           duration: "3h",
           star: "4.8",
           price: "\$25",
+          url: "https://www.google.com", // URL to redirect
         )
       });
     });
@@ -190,6 +194,7 @@ class BusCard extends StatelessWidget {
   final String duration;
   final String star;
   final String price;
+  final String url;
 
   const BusCard({
     super.key,
@@ -200,75 +205,88 @@ class BusCard extends StatelessWidget {
     required this.duration,
     required this.star,
     required this.price,
+    required this.url,
   });
+
+  void _launchUrl() async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw "Could not launch $url";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 8),
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Container(
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.grey[850],
+    return GestureDetector(
+      onTap: _launchUrl,
+      child: Card(
+        margin: EdgeInsets.symmetric(vertical: 8),
+        elevation: 4,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Bus details on the left
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
-                ),
-                Text(
-                  type,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[400]),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "$departure → $arrival",
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white),
-                ),
-              ],
-            ),
-            // Additional info on the right
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  duration,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[400]),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "⭐ $star",
-                  style: TextStyle(fontSize: 14, color: Colors.white),
-                ),
-                Text(
-                  price,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
-                ),
-              ],
-            ),
-          ],
+        child: Container(
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.grey[850],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Bus details on the left
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                  Text(
+                    type,
+                    style: TextStyle(fontSize: 14, color: Colors.grey[400]),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "$departure → $arrival",
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white),
+                  ),
+                ],
+              ),
+              // Additional info on the right
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    duration,
+                    style: TextStyle(fontSize: 14, color: Colors.grey[400]),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "⭐ $star",
+                    style: TextStyle(fontSize: 14, color: Colors.white),
+                  ),
+                  Text(
+                    price,
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-      ),
-    ).animate().fade(duration: 500.ms).slideY();
+      ).animate().fade(duration: 500.ms).slideY(),
+    );
   }
 }
