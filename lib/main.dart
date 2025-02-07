@@ -369,14 +369,14 @@ class BusCard extends StatelessWidget {
   });
 
   // Private method to launch the URL.
-  Future<void> _launchUrl() async {
-    final Uri uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      throw "Could not launch $url";
-    }
+Future<void> _launchUrl() async {
+  final Uri uri = Uri.parse(url);
+  if (await canLaunchUrl(uri)) {
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  } else {
+    debugPrint("Could not launch $url");
   }
+}
 
   @override
   Widget build(BuildContext context) {

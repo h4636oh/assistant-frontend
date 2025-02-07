@@ -12,8 +12,8 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.8
   flutter_animate: ^4.2.0  # For animations
-  url_launcher: ^6.1.8
-
+  url_launcher: ^6.3.1
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
