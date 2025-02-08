@@ -80,6 +80,10 @@ class _ChatScreenState extends State<ChatScreen> {
         addMovieTimeingCardToMessages();
       } else if (_controller.text.startsWith("movieslist")) {
         addMoviesListCardsToMessages();
+      } else if (_controller.text.startsWith("clear()")) {
+        setState(() {
+          messages.clear();
+        });
       } else {
         messages.add({
           "type": "text",
