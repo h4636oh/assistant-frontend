@@ -8,7 +8,7 @@ class AirbnbCard extends StatelessWidget {
   final String hotelName;
   final String location;
   final String ratingReviews;
-  final double totalPrice;
+  final String totalPrice;
   final String tagText;
 
   const AirbnbCard({
@@ -135,7 +135,7 @@ class AirbnbCard extends StatelessWidget {
                           ],
                         ),
                         Text(
-                          '₹${totalPrice.toStringAsFixed(0)}',
+                          totalPrice,
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -187,7 +187,7 @@ List<AirbnbCard> getAirbnbCards() {
       "hotel_name": "Flat in Calangute",
       "location": "Flat in Calangute",
       "rating_reviews": "4.92 (36)",
-      "total_price": "₹6,495 total",
+      "total_price": "₹6,495",
       "tag_text": "Superhost",
     },
     {
@@ -198,21 +198,20 @@ List<AirbnbCard> getAirbnbCards() {
       "hotel_name": "Flat in Calangute",
       "location": "Flat in Calangute near Scenic studio apartment at Baga",
       "rating_reviews": "4.86 (74)",
-      "total_price": "₹6,495 total",
+      "total_price": "₹6,495",
       "tag_text": "Cozy"
     }
   ];
 
   return airbnbDataList.map((airbnbData) {
     return AirbnbCard(
-      imageUrl: airbnbData["image_url"],
-      paymentUrl: airbnbData["payment_url"],
-      hotelName: airbnbData["hotel_name"],
-      location: airbnbData["location"],
-      ratingReviews: airbnbData["rating_reviews"],
-      totalPrice: double.parse(
-          airbnbData["total_price"].replaceAll(RegExp(r'[^0-9.]'), '')),
-      tagText: airbnbData["tag_text"],
+      imageUrl: airbnbData["image_url"] ?? "",           // Default to empty string
+      paymentUrl: airbnbData["payment_url"] ?? "",
+      hotelName: airbnbData["hotel_name"] ?? "Unknown",  // Fallback value
+      location: airbnbData["location"] ?? "Unknown",
+      ratingReviews: airbnbData["rating_reviews"] ?? "0.0 (0)",
+      totalPrice: airbnbData["total_price"] ?? "N/A",
+      tagText: airbnbData["tag_text"] ?? "",
     );
   }).toList();
 }
