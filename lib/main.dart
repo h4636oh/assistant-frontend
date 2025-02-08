@@ -10,7 +10,7 @@ import 'card/amazon_card.dart';
 import 'card/booking_dot_com_card.dart';
 import 'card/restaurant_card.dart';
 import 'card/fashion_shopping.dart';
-import 'card/movies_list.dart';
+import 'card/movies_timing.dart';
 
 void main() {
   runApp(const ChatApp());
@@ -73,8 +73,8 @@ class _ChatScreenState extends State<ChatScreen> {
         addRestaurantCardsToMessages();
       } else if (_controller.text.startsWith("fashion")) {
         addFashionShoppingCardsToMessages();
-      } else if (_controller.text.startsWith("movieslist")) {
-        addMoviesListCardsToMessages();
+      } else if (_controller.text.startsWith("mtime")) {
+        addMovieTimeingCardToMessages();
       } else {
         messages.add({
           "type": "text",
@@ -96,6 +96,17 @@ class _ChatScreenState extends State<ChatScreen> {
         );
       }
     });
+  }
+
+  /// Adds Movie Timings card messages
+  void addMovieTimeingCardToMessages() {
+    List<MoviesTimingCard> moviesTimingCards = getMoviesTimingCards();
+    for (var moviesTimingCard in moviesTimingCards) {
+      messages.add({
+        "type": "mtime",
+        "data": moviesTimingCard,
+      });
+    }
   }
 
   /// Adds bus card messages.
