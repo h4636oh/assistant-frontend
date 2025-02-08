@@ -9,7 +9,7 @@ import 'card/airbnb_card.dart';
 import 'card/amazon_card.dart';
 import 'card/booking_dot_com_card.dart';
 import 'card/restaurant_card.dart';
-import 'card/fassion_shopping.dart';
+import 'card/fashion_shopping.dart';
 
 void main() {
   runApp(const ChatApp());
@@ -72,6 +72,8 @@ class _ChatScreenState extends State<ChatScreen> {
         addRestaurantCardsToMessages();
       } else if (_controller.text.startsWith("fashion")) {
         addFashionShoppingCardsToMessages();
+      } else if (_controller.text.startsWith("movieslist")) {
+        addMoviesListCardsToMessages();
       } else {
         messages.add({
           "type": "text",
@@ -168,6 +170,17 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "fashion",
         "data": fashionCard,
+      });
+    }
+  }
+
+  /// Adds movies list card messages.
+  void addMoviesListCardsToMessages() {
+    List<MoviesList> moviesCards = getMoviesListCards();
+    for (var moviesCard in moviesCards) {
+      messages.add({
+        "type": "movieslist",
+        "data": moviesCard,
       });
     }
   }
