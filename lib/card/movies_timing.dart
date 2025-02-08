@@ -138,7 +138,7 @@ class MoviesTimingCard extends StatelessWidget {
             ],
           ),
         ),
-      ).animate().fade(duration: 400.ms).slideY(),
+      ).animate().fade(duration: 300.ms).slideX(),
     );
   }
 }

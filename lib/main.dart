@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:http/http.dart' as http;
 import 'card/bus_card.dart';
 import 'card/airplane_card.dart';
 import 'card/airbnb_card.dart';
@@ -45,47 +46,122 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
+
+  // Every message now includes a "sender" property.
   List<Map<String, dynamic>> messages = [];
+  bool _isLoading = false; // Tracks if a message is being sent/waiting for a response.
+
+  /// Sends the message to the server and waits for the reply.
+  Future<String> sendString(String message) async {
+    final url = Uri.parse(
+        'https://stirred-bream-largely.ngrok-free.app'); // Replace with your URL
+    try {
+      final response = await http
+          .post(
+            url,
+            headers: {"Content-Type": "text/plain"},
+            body: message,
+          )
+          .timeout(
+            const Duration(seconds: 30), // Timeout to prevent infinite waiting
+            onTimeout: () {
+              throw Exception('Request timed out');
+            },
+          );
+
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return 'Error: ${response.statusCode}';
+      }
+    } catch (e) {
+      debugPrint('Error: $e');
+      return 'Error: $e';
+    }
+  }
 
   /// Called when the send button is pressed or Enter is hit.
-  void _sendMessage() {
+  Future<void> _sendMessage() async {
     if (_controller.text.isEmpty) return;
+    final inputText = _controller.text.trim();
 
+    // Process clear command immediately.
+    if (inputText == "clear()") {
+      setState(() {
+        messages.clear();
+      });
+      _controller.clear();
+      return;
+    }
+
+    // Disable the input and send button.
     setState(() {
-      // Add the user message.
+      _isLoading = true;
       messages.add({
         "type": "text",
-        "text": _controller.text,
+        "text": inputText,
         "sender": "user",
       });
+    });
 
-      // Add cards based on the input.
-      if (_controller.text.startsWith("bus")) {
-        addBusCardsToMessages();
-      } else if (_controller.text.startsWith("airplane")) {
-        addAirplaneCardsToMessages();
-      } else if (_controller.text.startsWith("amazon")) {
-        addAmazonCardsToMessages();
-      } else if (_controller.text.startsWith("airbnb")) {
-        addAirbnbCardsToMessages();
-      } else if (_controller.text.startsWith("booking")) {
-        addBookingCardsToMessages();
-      } else if (_controller.text.startsWith("restaurant")) {
-        addRestaurantCardsToMessages();
-      } else if (_controller.text.startsWith("fashion")) {
-        addFashionShoppingCardsToMessages();
-      } else if (_controller.text.startsWith("mtime")) {
-        addMovieTimeingCardToMessages();
-      } else if (_controller.text.startsWith("movieslist")) {
-        addMoviesListCardsToMessages();
-      } else {
+    // Add a loading indicator message.
+    final int loadingMessageIndex = messages.length;
+    setState(() {
+      messages.add({
+        "type": "loading",
+        "sender": "bot",
+      });
+    });
+
+    // Wait until the HTTP request completes (i.e. wait for the reply).
+    String response = await sendString(inputText);
+
+    // Remove the loading indicator message.
+    setState(() {
+      messages.removeAt(loadingMessageIndex);
+    });
+
+    // Process the server response.
+    setState(() {
+      if (response.startsWith("Error: ")) {
         messages.add({
           "type": "text",
-          "text": "This is a placeholder response.",
-          "sender": "bot",
+          "text": response,
+          "sender": "system",
         });
+      } else {
+        // Based on the input, add cards or a text message.
+        if (inputText.startsWith("bus")) {
+          addBusCardsToMessages();
+        } else if (inputText.startsWith("airplane")) {
+          addAirplaneCardsToMessages();
+        } else if (inputText.startsWith("amazon")) {
+          addAmazonCardsToMessages();
+        } else if (inputText.startsWith("airbnb")) {
+          addAirbnbCardsToMessages();
+        } else if (inputText.startsWith("booking")) {
+          addBookingCardsToMessages();
+        } else if (inputText.startsWith("restaurant")) {
+          addRestaurantCardsToMessages();
+        } else if (inputText.startsWith("fashion")) {
+          addFashionShoppingCardsToMessages();
+        } else if (inputText.startsWith("mtime")) {
+          addMovieTimeingCardToMessages();
+        } else if (inputText.startsWith("movieslist")) {
+          addMoviesListCardsToMessages();
+        } else {
+          // Use the server's response as the bot's reply.
+          messages.add({
+            "type": "text",
+            "text": response,
+            "sender": "bot",
+          });
+        }
       }
+      // Re-enable the input and send button.
+      _isLoading = false;
     });
+
     _controller.clear();
     _focusNode.requestFocus();
 
@@ -101,13 +177,14 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  /// Adds Movie Timings card messages
+  /// Adds Movie Timings card messages.
   void addMovieTimeingCardToMessages() {
     List<MoviesTimingCard> moviesTimingCards = getMoviesTimingCards();
     for (var moviesTimingCard in moviesTimingCards) {
       messages.add({
         "type": "mtime",
         "data": moviesTimingCard,
+        "sender": "bot",
       });
     }
   }
@@ -119,6 +196,7 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "bus",
         "data": busCard,
+        "sender": "bot",
       });
     }
   }
@@ -130,6 +208,7 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "airplane",
         "data": airplaneCard,
+        "sender": "bot",
       });
     }
   }
@@ -141,6 +220,7 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "amazon",
         "data": amazonCard,
+        "sender": "bot",
       });
     }
   }
@@ -152,6 +232,7 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "airbnb",
         "data": airbnbCard,
+        "sender": "bot",
       });
     }
   }
@@ -163,6 +244,7 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "booking",
         "data": bookingCard,
+        "sender": "bot",
       });
     }
   }
@@ -174,6 +256,7 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "restaurant",
         "data": restaurantCard,
+        "sender": "bot",
       });
     }
   }
@@ -185,6 +268,7 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "fashion",
         "data": fashionCard,
+        "sender": "bot",
       });
     }
   }
@@ -196,6 +280,7 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "movieslist",
         "data": moviesCard,
+        "sender": "bot",
       });
     }
   }
@@ -210,6 +295,99 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Calculate a max width for message bubbles (e.g. 70% of screen width)
+    final maxBubbleWidth = MediaQuery.of(context).size.width * 0.7;
+
+    /// Helper function to wrap any message widget with an icon (or a reserved space)
+    /// so that the horizontal spacing is uniform.
+    Widget buildMessageWithIcon(Widget messageWidget, int index, bool isUser) {
+      // Determine if this is the first message in a consecutive chain.
+      bool showIcon = true;
+      if (index > 0) {
+        final prevMsg = messages[index - 1];
+        if (prevMsg["sender"] == messages[index]["sender"]) {
+          showIcon = false;
+        }
+      }
+
+      // Set a fixed width for the icon area.
+      const double iconAreaWidth = 40.0;
+      const double spacing = 8.0;
+
+      Widget iconWidget;
+      if (showIcon) {
+        if (isUser) {
+          // For user messages: icon on the top right in blue.
+          iconWidget = Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.blue, // Background color
+              ),
+              padding: const EdgeInsets.all(4.0),
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.person_rounded,
+                size: 30.0,
+                color: Colors.white,
+              ),
+            ),
+          );
+        } else {
+          // For bot (or system/loading) messages: icon on the top left in grey.
+          iconWidget = Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.grey[800],
+              ),
+              padding: const EdgeInsets.all(4.0),
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.smart_toy_rounded,
+                size: 30.0,
+                color: Colors.white,
+              ),
+            ),
+          );
+        }
+      } else {
+        // Reserve the same space with an invisible widget.
+        iconWidget = const SizedBox(width: iconAreaWidth);
+      }
+
+      // Build a row that always reserves the icon area.
+      if (isUser) {
+        return Align(
+          alignment: Alignment.centerRight,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Flexible(child: messageWidget),
+              const SizedBox(width: spacing),
+              SizedBox(width: iconAreaWidth, child: iconWidget),
+            ],
+          ),
+        );
+      } else {
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(width: iconAreaWidth, child: iconWidget),
+              const SizedBox(width: spacing),
+              Flexible(child: messageWidget),
+            ],
+          ),
+        );
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -218,23 +396,23 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         centerTitle: true,
         backgroundColor: Colors.blueAccent,
-        leading: const Icon(Icons.chat_bubble, color: Colors.white),
       ),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
-              controller: _scrollController, // Attach the scroll controller.
+              controller: _scrollController,
               padding: const EdgeInsets.all(10),
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 final msg = messages[index];
+                final String sender = msg["sender"] ?? "bot";
+                final bool isUser = sender == "user";
 
+                // For text messages, build a styled bubble.
                 if (msg["type"] == "text") {
-                  bool isUser = msg["sender"] == "user";
-                  return Align(
-                    alignment:
-                        isUser ? Alignment.centerRight : Alignment.centerLeft,
+                  final bubble = ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxBubbleWidth),
                     child: Container(
                       margin: const EdgeInsets.symmetric(vertical: 4),
                       padding: const EdgeInsets.all(12),
@@ -244,65 +422,69 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       child: Text(
                         msg["text"],
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 20),
+                        style: const TextStyle(color: Colors.white, fontSize: 20),
                       ),
-                    ).animate().fade(duration: 500.ms).slideY(),
-                  );
-                } else if (msg["type"] == "bus") {
+                    ),
+                  ).animate().fade(duration: 300.ms).slideX(
+                        begin: isUser ? 1 : -1,
+                      );
+                  return buildMessageWithIcon(bubble, index, isUser);
+                }
+                // Render a loading indicator message.
+                else if (msg["type"] == "loading") {
+                  final bubble = ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxBubbleWidth),
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 4),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[800],
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Center(
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.0,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ).animate().fade(duration: 300.ms).slideX(
+                        begin: isUser ? 1 : -1,
+                      );
+                  return buildMessageWithIcon(bubble, index, isUser);
+                }
+                // For card messages, wrap the card widget similarly.
+                else if (msg["type"] == "bus") {
                   final busCard = msg["data"] as BusCard;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: busCard,
-                  );
+                  return buildMessageWithIcon(busCard, index, isUser);
                 } else if (msg["type"] == "airplane") {
                   final airplaneCard = msg["data"] as AirplaneCard;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: airplaneCard,
-                  );
+                  return buildMessageWithIcon(airplaneCard, index, isUser);
                 } else if (msg["type"] == "amazon") {
                   final amazonCard = msg["data"] as AmazonCard;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: amazonCard,
-                  );
+                  return buildMessageWithIcon(amazonCard, index, isUser);
                 } else if (msg["type"] == "airbnb") {
                   final airbnbCard = msg["data"] as AirbnbCard;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: airbnbCard,
-                  );
+                  return buildMessageWithIcon(airbnbCard, index, isUser);
                 } else if (msg["type"] == "booking") {
                   final bookingCard = msg["data"] as BookingCard;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: bookingCard,
-                  );
+                  return buildMessageWithIcon(bookingCard, index, isUser);
                 } else if (msg["type"] == "restaurant") {
                   final restaurantCard = msg["data"] as RestaurantCard;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: restaurantCard,
-                  );
+                  return buildMessageWithIcon(restaurantCard, index, isUser);
                 } else if (msg["type"] == "fashion") {
                   final fashionCard = msg["data"] as FashionShopping;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: fashionCard,
-                  );
+                  return buildMessageWithIcon(fashionCard, index, isUser);
                 } else if (msg["type"] == "movieslist") {
                   final movieslist = msg["data"] as MovieList;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: movieslist,
-                  );
+                  return buildMessageWithIcon(movieslist, index, isUser);
                 } else if (msg["type"] == "mtime") {
                   final movietimes = msg["data"] as MoviesTimingCard;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: movietimes,
-                  );
+                  return buildMessageWithIcon(movietimes, index, isUser);
                 }
                 return const SizedBox.shrink();
               },
@@ -313,9 +495,11 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Row(
               children: [
                 Expanded(
+                  // Disable the text field while waiting for a response.
                   child: TextField(
                     controller: _controller,
                     focusNode: _focusNode,
+                    enabled: !_isLoading,
                     style: const TextStyle(color: Colors.white),
                     onSubmitted: (value) => _sendMessage(),
                     textInputAction: TextInputAction.send,
@@ -332,9 +516,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
                 const SizedBox(width: 8),
+                // Disable the send button while waiting for a response.
                 FloatingActionButton(
                   backgroundColor: Colors.blueAccent,
-                  onPressed: _sendMessage,
+                  onPressed: _isLoading ? null : _sendMessage,
                   child: Icon(Icons.send, color: Colors.white)
                       .animate()
                       .scale(duration: 200.ms),
