@@ -1,4 +1,4 @@
-package com.example.bitsgoa
+package com.example.athena
 
 import io.flutter.embedding.android.FlutterActivity
 
