@@ -57,6 +57,7 @@ class AirbnbCard extends StatelessWidget {
           },
         ).then((confirmed) {
           if (confirmed == true) {
+            // ignore: use_build_context_synchronously
             _launchURL(context);
           }
         });
@@ -167,7 +168,7 @@ List<AirbnbCard> getAirbnbCards() {
       "hotel_name": "Luxury 3BHK Penthouse in South Delhi",
       "location": "Delhi, India",
       "rating_reviews": "4.95 (135 reviews)",
-      "total_price": "₹ 15,000",
+      "total_price": "₹ 15,000",  // String issue here
       "tag_text": "Luxury"
     },
     {
@@ -176,21 +177,20 @@ List<AirbnbCard> getAirbnbCards() {
       "hotel_name": "Cozy 1BHK Flat in South Delhi",
       "location": "Delhi, India",
       "rating_reviews": "4.78 (58 reviews)",
-      "total_price": "₹ 8,000",
+      "total_price": "₹ 8,000",  // String issue here
       "tag_text": "Cozy"
     }
   ];
 
   return airbnbDataList.map((airbnbData) {
     return AirbnbCard(
-      imageUrl: airbnbData[""], 
-      paymentUrl: airbnbData[""],
-      hotelName: airbnbData[""],
-      location: airbnbData[""],
-      ratingReviews: airbnbData[""],
-      totalPrice: airbnbData[""],
-      tagText: airbnbData[""]
+      imageUrl: airbnbData["image_url"], 
+      paymentUrl: airbnbData["payment_url"],
+      hotelName: airbnbData["hotel_name"],
+      location: airbnbData["location"],
+      ratingReviews: airbnbData["rating_reviews"],
+      totalPrice: double.parse(airbnbData["total_price"].replaceAll(RegExp(r'[^\d.]'), '')), // FIX HERE
+      tagText: airbnbData["tag_text"],
     );
   }).toList();
 }
-

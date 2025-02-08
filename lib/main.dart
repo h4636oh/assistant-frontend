@@ -58,7 +58,12 @@ class _ChatScreenState extends State<ChatScreen> {
       } else if (_controller.text.startsWith("airplane")) {
         addAirplaneCardsToMessages();
       } else if (_controller.text.startsWith("amazon")) {
-        addAmazonCardsToMessages();
+        // addAmazonCardsToMessages();
+        messages.add({
+          "type": "text",
+          "text": "This is a amazon response.",
+          "sender": "bot",
+        });
       } else if (_controller.text.startsWith("airbnb")) {
         addAirbnbCardsToMessages();
       } else {
@@ -95,22 +100,22 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void addAmazonCardsToMessages() {
-    List<AmazonCard> amazonCards = getAmazonCards();
-    for (var airplaneCard in amazonCards) {
-      messages.add({
-        "type": "airplane",
-        "data": airplaneCard,
-      });
-    }
-  }
+  // void addAmazonCardsToMessages() {
+  //   List<AmazonCard> amazonCards = getAmazonCards();
+  //   for (var airplaneCard in amazonCards) {
+  //     messages.add({
+  //       "type": "airplane",
+  //       "data": airplaneCard,
+  //     });
+  //   }
+  // }
 
   void addAirbnbCardsToMessages() {
     List<AirbnbCard> airbnbCards = getAirbnbCards();
-    for (var airplaneCard in airbnbCards) {
+    for (var airbnbCard in airbnbCards) {
       messages.add({
-        "type": "airplane",
-        "data": airplaneCard,
+        "type": "airbnb",
+        "data": airbnbCard,
       });
     }
   }
@@ -167,12 +172,12 @@ class _ChatScreenState extends State<ChatScreen> {
                     alignment: Alignment.centerLeft,
                     child: airplaneCard,
                   );
-                } else if (msg["type"] == "amazon") {
-                  final amazonCard = msg["data"] as AmazonCard;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: amazonCard,
-                  );
+                // } else if (msg["type"] == "amazon") {
+                //   final amazonCard = msg["data"] as AmazonCard;
+                //   return Align(
+                //     alignment: Alignment.centerLeft,
+                //     child: amazonCard,
+                //   );
                 } else if (msg["type"] == "airbnb") {
                   final airbnbCard = msg["data"] as AirbnbCard;
                   return Align(
