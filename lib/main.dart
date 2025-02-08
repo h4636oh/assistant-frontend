@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:http/http.dart' as http;
+import 'dart:io';
 import 'card/bus_card.dart';
 import 'card/airplane_card.dart';
 import 'card/airbnb_card.dart';
@@ -13,8 +14,19 @@ import 'card/restaurant_card.dart';
 import 'card/fashion_shopping.dart';
 import 'card/movies_list.dart';
 import 'card/movies_timing.dart';
+import 'card/perplexity_card.dart';
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
 
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
   runApp(const ChatApp());
 }
 
@@ -54,21 +66,22 @@ class _ChatScreenState extends State<ChatScreen> {
 
   /// Sends the message to the server and waits for the reply.
   Future<String> sendString(String message) async {
-    final url = Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Replace with your URL
+    final url = Uri.parse(
+        'https://mighty-sailfish-touched.ngrok-free.app'); // Replace with your URL
     _client = http.Client();
     try {
       final response = await _client!
           .post(
-            url,
-            headers: {"Content-Type": "text/plain"},
-            body: message,
-          )
+        url,
+        headers: {"Content-Type": "text/plain"},
+        body: message,
+      )
           .timeout(
-            const Duration(seconds: 30), // Timeout to prevent infinite waiting
-            onTimeout: () {
-              throw Exception('Request timed out');
-            },
-          );
+        const Duration(seconds: 30), // Timeout to prevent infinite waiting
+        onTimeout: () {
+          throw Exception('Request timed out');
+        },
+      );
 
       _client?.close();
       _client = null;
@@ -175,6 +188,8 @@ class _ChatScreenState extends State<ChatScreen> {
           addMovieTimeingCardToMessages();
         } else if (inputText.startsWith("movieslist")) {
           addMoviesListCardsToMessages();
+        } else if (inputText.startsWith("perplexity")) {
+          addPerplexityCardsToMessages();
         } else {
           messages.add({
             "type": "text",
@@ -309,6 +324,18 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  /// Adds perplexity card messages.
+  void addPerplexityCardsToMessages() {
+    List<PerplexityCard> perplexityCards = getPerplexityCards();
+    for (var perplexityCard in perplexityCards) {
+      messages.add({
+        "type": "perplexity",
+        "data": perplexityCard,
+        "sender": "bot",
+      });
+    }
+  }
+
   @override
   void dispose() {
     _controller.dispose();
@@ -437,7 +464,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       child: Text(
                         msg["text"],
-                        style: const TextStyle(color: Colors.white, fontSize: 20),
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 20),
                       ),
                     ),
                   ).animate().fade(duration: 300.ms).slideX(
@@ -460,7 +488,8 @@ class _ChatScreenState extends State<ChatScreen> {
                           height: 24,
                           child: CircularProgressIndicator(
                             strokeWidth: 2.0,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         ),
                       ),
@@ -498,6 +527,10 @@ class _ChatScreenState extends State<ChatScreen> {
                 } else if (msg["type"] == "mtime") {
                   final movietimes = msg["data"] as MoviesTimingCard;
                   return buildMessageWithIcon(movietimes, index, isUser);
+                } else if (msg["type"] == "perplexity") {
+                  final perplexity = msg["data"] as PerplexityCard;
+                  debugPrint(perplexity.toString());
+                  return buildMessageWithIcon(perplexity, index, isUser);
                 }
                 return const SizedBox.shrink();
               },
