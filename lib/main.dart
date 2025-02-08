@@ -568,7 +568,7 @@ class _ChatScreenState extends State<ChatScreen> {
           (i < perplexityData.length) ? perplexityData[i] : perplexityData[0];
       conversationMessages.add({
         "role": "assistant",
-        "content": jsonEncode(data),
+        "content": (data).toString(),
       });
     }
   }
