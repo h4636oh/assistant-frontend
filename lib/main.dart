@@ -51,7 +51,7 @@ class _ChatScreenState extends State<ChatScreen> {
   List<Map<String, dynamic>> messages = [];
 
     Future<void> sendString(String message) async {
-    final url = Uri.parse('https://mighty-sailfish-touched.ngrok-free.app'); // Replace with your URL
+    final url = Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Replace with your URL
 
     try {
       final response = await http.post(
@@ -85,8 +85,6 @@ class _ChatScreenState extends State<ChatScreen> {
         "text": _controller.text,
         "sender": "user",
       });
-
-      //
 
       // Add cards based on the input.
       if (_controller.text.startsWith("bus")) {
