@@ -213,7 +213,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Assistant",
+          "ATHENA",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
