@@ -11,10 +11,7 @@ class RestaurantCard extends StatelessWidget {
   final String rating;
   final String image_url;
   final String restaurant_url;
-  final String tag0;
-  final String tag1;
-  final String tag2;
-  final String tag3;
+  final List<String> tags;
 
   const RestaurantCard({
     super.key,
@@ -23,10 +20,7 @@ class RestaurantCard extends StatelessWidget {
     required this.rating,
     required this.image_url,
     required this.restaurant_url,
-    required this.tag0,
-    required this.tag1,
-    required this.tag2,
-    required this.tag3,
+    required this.tags,
   });
 
   Future<void> _launchUrl() async {
@@ -40,6 +34,10 @@ class RestaurantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Display only the first 5 tags if there are more than 5, otherwise display all
+    final List<String> displayedTags =
+        tags.length > 3 ? tags.sublist(0, 3) : tags;
+
     return GestureDetector(
       onTap: () {
         // Show a confirmation dialog before proceeding.
@@ -117,45 +115,21 @@ class RestaurantCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              // Display tags as plain text styled like a "Breakfast Included" tag (ignoring any icon)
+              // Display tags as plain text styled like a "Breakfast Included" tag
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: Wrap(
                   spacing: 8.0,
-                  children: [
-                    Text(
-                      tag0,
+                  children: displayedTags.map((tag) {
+                    return Text(
+                      tag,
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: Colors.green,
                       ),
-                    ),
-                    Text(
-                      tag1,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.green,
-                      ),
-                    ),
-                    Text(
-                      tag2,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.green,
-                      ),
-                    ),
-                    Text(
-                      tag3,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.green,
-                      ),
-                    ),
-                  ],
+                    );
+                  }).toList(),
                 ),
               ),
               const SizedBox(height: 12),
@@ -176,10 +150,7 @@ List<RestaurantCard> getRestaurantCards() {
       "name": "The Gourmet Kitchen",
       "rating": "4.5",
       "number": 120,
-      "tag0": "Italian",
-      "tag1": "Pasta",
-      "tag2": "Desserts",
-      "tag3": "Wine"
+      "tags": ["Italian", "Pasta", "Desserts", "Wine"]
     },
     {
       "image_url": "https://example.com/restaurant2.jpg",
@@ -187,10 +158,7 @@ List<RestaurantCard> getRestaurantCards() {
       "name": "Sushi World",
       "rating": "4.8",
       "number": 200,
-      "tag0": "Japanese",
-      "tag1": "Sushi",
-      "tag2": "Seafood",
-      "tag3": "Fusion"
+      "tags": ["Japanese", "Sushi", "Seafood", "Fusion", "Fresh", "Seasonal"]
     },
   ];
 
@@ -201,10 +169,7 @@ List<RestaurantCard> getRestaurantCards() {
       name: data["name"],
       rating: data["rating"],
       number: data["number"],
-      tag0: data["tag0"],
-      tag1: data["tag1"],
-      tag2: data["tag2"],
-      tag3: data["tag3"],
+      tags: List<String>.from(data["tags"]),
     );
   }).toList();
 }
