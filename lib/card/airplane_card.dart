@@ -156,7 +156,7 @@ class AirplaneCard extends StatelessWidget {
                   ),
                   Text(
                     nonstop.toLowerCase() == "yes" ? "Nonstop" : nonstop.toLowerCase() == "no" ? "Layover" : "N/A",
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: nonstop.toLowerCase() == "yes" ? Colors.green : Colors.red),
                   ),
                 ],
               ),
