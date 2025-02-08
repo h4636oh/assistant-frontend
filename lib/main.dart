@@ -100,15 +100,15 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  // void addAmazonCardsToMessages() {
-  //   List<AmazonCard> amazonCards = getAmazonCards();
-  //   for (var airplaneCard in amazonCards) {
-  //     messages.add({
-  //       "type": "airplane",
-  //       "data": airplaneCard,
-  //     });
-  //   }
-  // }
+  void addAmazonCardsToMessages() {
+    List<AmazonCard> amazonCards = getAmazonCards();
+    for (var amazoncard in amazonCards) {
+      messages.add({
+        "type": "amazon",
+        "data": amazoncard,
+      });
+    }
+  }
 
   void addAirbnbCardsToMessages() {
     List<AirbnbCard> airbnbCards = getAirbnbCards();
@@ -172,12 +172,12 @@ class _ChatScreenState extends State<ChatScreen> {
                     alignment: Alignment.centerLeft,
                     child: airplaneCard,
                   );
-                // } else if (msg["type"] == "amazon") {
-                //   final amazonCard = msg["data"] as AmazonCard;
-                //   return Align(
-                //     alignment: Alignment.centerLeft,
-                //     child: amazonCard,
-                //   );
+                  // } else if (msg["type"] == "amazon") {
+                  //   final amazonCard = msg["data"] as AmazonCard;
+                  //   return Align(
+                  //     alignment: Alignment.centerLeft,
+                  //     child: amazonCard,
+                  //   );
                 } else if (msg["type"] == "airbnb") {
                   final airbnbCard = msg["data"] as AirbnbCard;
                   return Align(
