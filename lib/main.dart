@@ -10,6 +10,7 @@ import 'card/amazon_card.dart';
 import 'card/booking_dot_com_card.dart';
 import 'card/restaurant_card.dart';
 import 'card/fashion_shopping.dart';
+import 'card/movies_list.dart';
 
 void main() {
   runApp(const ChatApp());
