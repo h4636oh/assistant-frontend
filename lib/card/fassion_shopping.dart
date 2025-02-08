@@ -18,7 +18,7 @@ class FashionShopping extends StatelessWidget {
     required this.productUrl,
   });
 
-  Future<void> _launchURL(BuildContext context) async {
+  Future<void> _launchURL() async {
     final Uri uri = Uri.parse(productUrl);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -53,85 +53,85 @@ class FashionShopping extends StatelessWidget {
           },
         ).then((confirmed) {
           if (confirmed == true) {
-            // ignore: use_build_context_synchronously
-            _launchURL(context);
+            _launchURL();
           }
         });
       },
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-        elevation: 4,
-        child: Stack(
-          children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16.0),
-                  child: AspectRatio(
-                    aspectRatio: 1, // Ensures image fits properly
+      child: FractionallySizedBox(
+        widthFactor: 0.75, // 3/4 of the viewport width
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          elevation: 4,
+          child: Stack(
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16.0),
                     child: Image.network(
                       imageUrl,
                       width: double.infinity,
+                      height: 300, // Reduced image height
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return const Center(child: Icon(Icons.image_not_supported, size: 50));
                       },
                     ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Align(
-                    alignment: Alignment.centerRight,
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     child: Text(
-                      '₹${price.toStringAsFixed(0)}',
+                      title,
                       style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 12),
-              ],
-            ),
-            Positioned(
-              top: 10,
-              left: 10,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(80, 0, 0, 0),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  brand,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                  const SizedBox(height: 4),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        '₹${price.toStringAsFixed(0)}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+              ),
+              Positioned(
+                top: 10,
+                left: 10,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(80, 0, 0, 0),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    brand,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ).animate().fade(duration: 500.ms).slideY(),
+            ],
+          ).animate().fade(duration: 500.ms).slideY(),
+        ),
       ),
     );
   }
