@@ -52,21 +52,20 @@ class _ChatScreenState extends State<ChatScreen> {
 
   /// Sends the message to the server and waits for the reply.
   Future<String> sendString(String message) async {
-    final url = Uri.parse(
-        'https://stirred-bream-largely.ngrok-free.app'); // Replace with your URL
+    final url = Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Replace with your URL
     try {
       final response = await http
           .post(
-        url,
-        headers: {"Content-Type": "text/plain"},
-        body: message,
-      )
+            url,
+            headers: {"Content-Type": "text/plain"},
+            body: message,
+          )
           .timeout(
-        const Duration(seconds: 30), // Add timeout to prevent infinite waiting
-        onTimeout: () {
-          throw Exception('Request timed out');
-        },
-      );
+            const Duration(seconds: 30), // Timeout to prevent infinite waiting
+            onTimeout: () {
+              throw Exception('Request timed out');
+            },
+          );
 
       if (response.statusCode == 200) {
         return response.body;
@@ -75,9 +74,8 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     } catch (e) {
       debugPrint('Error: $e');
+      return 'Error: $e';
     }
-
-    return "This Function Didn't Work";
   }
 
   /// Called when the send button is pressed or Enter is hit.
@@ -95,8 +93,8 @@ class _ChatScreenState extends State<ChatScreen> {
       return;
     }
 
+    // Add the user message.
     setState(() {
-      // Add the user message.
       messages.add({
         "type": "text",
         "text": inputText,
@@ -104,20 +102,33 @@ class _ChatScreenState extends State<ChatScreen> {
       });
     });
 
+    // Add a loading indicator message.
+    final int loadingMessageIndex = messages.length;
+    setState(() {
+      messages.add({
+        "type": "loading",
+        "sender": "bot",
+      });
+    });
+
     // Wait until the HTTP request completes (i.e. wait for the reply).
     String response = await sendString(inputText);
 
-    if (response.startsWith("Error: ")) {
-      setState(() {
+    // Remove the loading indicator message.
+    setState(() {
+      messages.removeAt(loadingMessageIndex);
+    });
+
+    // Process the server response.
+    setState(() {
+      if (response.startsWith("Error: ")) {
         messages.add({
           "type": "text",
           "text": response,
           "sender": "system",
         });
-      });
-    } else {
-      setState(() {
-        // Add cards based on the input.
+      } else {
+        // Based on the input, add cards or a text message.
         if (inputText.startsWith("bus")) {
           addBusCardsToMessages();
         } else if (inputText.startsWith("airplane")) {
@@ -137,14 +148,15 @@ class _ChatScreenState extends State<ChatScreen> {
         } else if (inputText.startsWith("movieslist")) {
           addMoviesListCardsToMessages();
         } else {
+          // Use the server's response as the bot's reply.
           messages.add({
             "type": "text",
-            "text": "This is a placeholder response.",
+            "text": response,
             "sender": "bot",
           });
         }
-      });
-    }
+      }
+    });
 
     _controller.clear();
     _focusNode.requestFocus();
@@ -319,7 +331,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           );
         } else {
-          // For bot messages: icon on the top left in grey.
+          // For bot (or system/loading) messages: icon on the top left in grey.
           iconWidget = Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Container(
@@ -380,7 +392,6 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         centerTitle: true,
         backgroundColor: Colors.blueAccent,
-        // The leading property has been removed to eliminate the top left icon.
       ),
       body: Column(
         children: [
@@ -407,8 +418,34 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       child: Text(
                         msg["text"],
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 20),
+                        style: const TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                    ),
+                  ).animate().fade(duration: 300.ms).slideX(
+                        begin: isUser ? 1 : -1,
+                      );
+                  return buildMessageWithIcon(bubble, index, isUser);
+                }
+                // Render a loading indicator message.
+                else if (msg["type"] == "loading") {
+                  final bubble = ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxBubbleWidth),
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 4),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[800],
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Center(
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.0,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        ),
                       ),
                     ),
                   ).animate().fade(duration: 300.ms).slideX(
