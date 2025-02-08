@@ -178,7 +178,6 @@ class _ChatScreenState extends State<ChatScreen> {
   /// Adds movies list card messages.
   void addMoviesListCardsToMessages() {
     List<MovieList> moviesCards = getMoviesListCards();
-      debugPrint("Movies retrieved: ${moviesCards.length}");
     for (var moviesCard in moviesCards) {
       messages.add({
         "type": "movieslist",

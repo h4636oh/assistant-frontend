@@ -72,14 +72,25 @@ class MovieList extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16.0),
-                    child: Image.network(
-                      poster,
-                      width: double.infinity,
-                      height: 300, // Reduced image height
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Center(
-                            child: Icon(Icons.image_not_supported, size: 50));
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        return AspectRatio(
+                          aspectRatio: 2 / 3, // Default ratio (adjust if needed)
+                          child: Image.network(
+                            poster,
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Center(
+                                child: Icon(Icons.image_not_supported, size: 50),
+                              );
+                            },
+                          ),
+                        );
                       },
                     ),
                   ),
@@ -98,7 +109,7 @@ class MovieList extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     child: Align(
-                      alignment: Alignment.centerRight,
+                      alignment: Alignment.centerLeft, // Moved rating to left
                       child: Text(
                         ageRating,
                         style: const TextStyle(
