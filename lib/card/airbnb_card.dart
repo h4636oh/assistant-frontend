@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
-class ListingCard extends StatelessWidget {
+class AirbnbCard extends StatelessWidget {
   final String imageUrl;
   final String paymentUrl;
   final String hotelName;
   final String location;
   final String ratingReviews;
   final double totalPrice;
-  final String tagText; // Tag text variable
+  final String tagText;
 
-  const ListingCard({
+  const AirbnbCard({
     super.key,
     required this.imageUrl,
     required this.paymentUrl,
@@ -18,23 +19,48 @@ class ListingCard extends StatelessWidget {
     required this.location,
     required this.ratingReviews,
     required this.totalPrice,
-    required this.tagText, // Accepting tag text from constructor
+    required this.tagText,
   });
 
-  void _launchURL() async {
-    try {
-      if (await canLaunchUrl(Uri.parse(paymentUrl))) {
-        await launchUrl(Uri.parse(paymentUrl));
-      }
-    } catch (e) {
-      // Handle the error silently or log it if needed
+  Future<void> _launchURL(BuildContext context) async {
+    final Uri uri = Uri.parse(paymentUrl);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      debugPrint("Could not launch $paymentUrl");
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _launchURL,
+      onTap: () {
+        showDialog<bool>(
+          context: context,
+          builder: (BuildContext dialogContext) {
+            return AlertDialog(
+              title: const Text("Confirmation"),
+              content: const Text("Do you want to proceed to the Airbnb listing?"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(false),
+                  child: const Text("Back"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop(true);
+                  },
+                  child: const Text("Ok"),
+                ),
+              ],
+            );
+          },
+        ).then((confirmed) {
+          if (confirmed == true) {
+            _launchURL(context);
+          }
+        });
+      },
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.0),
@@ -55,26 +81,26 @@ class ListingCard extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   child: Text(
                     hotelName,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   child: Text(
                     location,
-                    style: TextStyle(color: Colors.grey),
+                    style: const TextStyle(color: Colors.grey),
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   child: Row(
@@ -82,11 +108,11 @@ class ListingCard extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.star, color: Colors.orange, size: 18),
-                          SizedBox(width: 4),
+                          const Icon(Icons.star, color: Colors.orange, size: 18),
+                          const SizedBox(width: 4),
                           Text(
                             ratingReviews,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                               color: Colors.black87,
@@ -96,7 +122,7 @@ class ListingCard extends StatelessWidget {
                       ),
                       Text(
                         '₹${totalPrice.toStringAsFixed(0)} total',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -104,22 +130,21 @@ class ListingCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
               ],
             ),
-            // Tag positioned at the top-left corner
             Positioned(
               top: 10,
               left: 10,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(80, 0, 0, 0), // Fix for the deprecation warning
+                  color: const Color.fromARGB(80, 0, 0, 0),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   tagText,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
@@ -129,39 +154,43 @@ class ListingCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      ).animate().fade(duration: 500.ms).slideY(),
     );
   }
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+List<AirbnbCard> getAirbnbCards() {
+  final List<Map<String, dynamic>> airbnbDataList = [
+    {
+      "image_url": "https://i.pinimg.com/564x/7c/7a/f4/7c7af4e2c9d2b6d5e5bfbf8f4c4f2c3c.jpg",
+      "payment_url": "https://www.airbnb.co.in/rooms/73498738",
+      "hotel_name": "Luxury 3BHK Penthouse in South Delhi",
+      "location": "Delhi, India",
+      "rating_reviews": "4.95 (135 reviews)",
+      "total_price": "₹ 15,000",
+      "tag_text": "Luxury"
+    },
+    {
+      "image_url": "https://i.pinimg.com/564x/6c/7f/4a/6c7f4a9f4d7c9b8b02a92a3c4c4d4a3d.jpg",
+      "payment_url": "https://www.airbnb.co.in/rooms/73498739",
+      "hotel_name": "Cozy 1BHK Flat in South Delhi",
+      "location": "Delhi, India",
+      "rating_reviews": "4.78 (58 reviews)",
+      "total_price": "₹ 8,000",
+      "tag_text": "Cozy"
+    }
+  ];
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Colors.grey[200],
-        appBar: AppBar(title: Text('Listing Card')),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ListingCard(
-              imageUrl: "https://a0.muscache.com/im/pictures/hosting/Hosting-1252006468109509167/original/05652ca2-5d6c-4cac-b3ce-33b672e1c36e.jpeg?im_w=720&im_format=avif",
-              paymentUrl: "https://www.airbnb.co.in/rooms/1252006468109509167",
-              hotelName: 'Apartment in Siolim',
-              location: 'Elements Studio GOA',
-              ratingReviews: '4.96 (84 reviews)',
-              totalPrice: 9898,
-              tagText: 'Guest Favourite', // Customizable tag text
-            ),
-          ),
-        ),
-      ),
+  return airbnbDataList.map((airbnbData) {
+    return AirbnbCard(
+      imageUrl: airbnbData[""], 
+      paymentUrl: airbnbData[""],
+      hotelName: airbnbData[""],
+      location: airbnbData[""],
+      ratingReviews: airbnbData[""],
+      totalPrice: airbnbData[""],
+      tagText: airbnbData[""]
     );
-  }
+  }).toList();
 }
 
-void main() {
-  runApp(MyApp());
-}

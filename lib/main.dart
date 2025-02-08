@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'card/bus_card.dart';
 import 'card/airplane_card.dart';
+import 'card/airbnb_card.dart';
+import 'card/amazon_card.dart';
 
 void main() {
   runApp(const ChatApp());
@@ -55,6 +57,10 @@ class _ChatScreenState extends State<ChatScreen> {
         addBusCardsToMessages();
       } else if (_controller.text.startsWith("airplane")) {
         addAirplaneCardsToMessages();
+      } else if (_controller.text.startsWith("amazon")) {
+        addAmazonCardsToMessages();
+      } else if (_controller.text.startsWith("airbnb")) {
+        addAirbnbCardsToMessages();
       } else {
         messages.add({
           "type": "text",
@@ -82,6 +88,26 @@ class _ChatScreenState extends State<ChatScreen> {
   void addAirplaneCardsToMessages() {
     List<AirplaneCard> airplaneCards = getAirplaneCards();
     for (var airplaneCard in airplaneCards) {
+      messages.add({
+        "type": "airplane",
+        "data": airplaneCard,
+      });
+    }
+  }
+
+  void addAmazonCardsToMessages() {
+    List<AmazonCard> amazonCards = getAmazonCards();
+    for (var airplaneCard in amazonCards) {
+      messages.add({
+        "type": "airplane",
+        "data": airplaneCard,
+      });
+    }
+  }
+
+  void addAirbnbCardsToMessages() {
+    List<AirbnbCard> airbnbCards = getAirbnbCards();
+    for (var airplaneCard in airbnbCards) {
       messages.add({
         "type": "airplane",
         "data": airplaneCard,
@@ -140,6 +166,18 @@ class _ChatScreenState extends State<ChatScreen> {
                   return Align(
                     alignment: Alignment.centerLeft,
                     child: airplaneCard,
+                  );
+                } else if (msg["type"] == "amazon") {
+                  final amazonCard = msg["data"] as AmazonCard;
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: amazonCard,
+                  );
+                } else if (msg["type"] == "airbnb") {
+                  final airbnbCard = msg["data"] as AirbnbCard;
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: airbnbCard,
                   );
                 }
                 return const SizedBox.shrink();
