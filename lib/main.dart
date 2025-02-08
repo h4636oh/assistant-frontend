@@ -97,10 +97,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void addAmazonCardsToMessages() {
     List<AmazonCard> amazonCards = getAmazonCards();
-    for (var airplaneCard in amazonCards) {
+    for (var amazoncard in amazonCards) {
       messages.add({
-        "type": "airplane",
-        "data": airplaneCard,
+        "type": "amazon",
+        "data": amazoncard,
       });
     }
   }
