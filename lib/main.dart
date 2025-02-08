@@ -45,6 +45,8 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
+
+  // Every message now includes a "sender" property.
   List<Map<String, dynamic>> messages = [];
 
   /// Called when the send button is pressed or Enter is hit.
@@ -101,13 +103,14 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  /// Adds Movie Timings card messages
+  /// Adds Movie Timings card messages.
   void addMovieTimeingCardToMessages() {
     List<MoviesTimingCard> moviesTimingCards = getMoviesTimingCards();
     for (var moviesTimingCard in moviesTimingCards) {
       messages.add({
         "type": "mtime",
         "data": moviesTimingCard,
+        "sender": "bot",
       });
     }
   }
@@ -119,6 +122,7 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "bus",
         "data": busCard,
+        "sender": "bot",
       });
     }
   }
@@ -130,6 +134,7 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "airplane",
         "data": airplaneCard,
+        "sender": "bot",
       });
     }
   }
@@ -141,6 +146,7 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "amazon",
         "data": amazonCard,
+        "sender": "bot",
       });
     }
   }
@@ -152,6 +158,7 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "airbnb",
         "data": airbnbCard,
+        "sender": "bot",
       });
     }
   }
@@ -163,6 +170,7 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "booking",
         "data": bookingCard,
+        "sender": "bot",
       });
     }
   }
@@ -174,6 +182,7 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "restaurant",
         "data": restaurantCard,
+        "sender": "bot",
       });
     }
   }
@@ -185,6 +194,7 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "fashion",
         "data": fashionCard,
+        "sender": "bot",
       });
     }
   }
@@ -196,6 +206,7 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "movieslist",
         "data": moviesCard,
+        "sender": "bot",
       });
     }
   }
@@ -210,6 +221,91 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Calculate a max width for message bubbles (e.g. 70% of screen width)
+    final maxBubbleWidth = MediaQuery.of(context).size.width * 0.7;
+
+    /// Helper function to wrap any message widget with an icon (or a reserved space)
+    /// so that the horizontal spacing is uniform.
+    Widget buildMessageWithIcon(Widget messageWidget, int index, bool isUser) {
+      // Determine if this is the first message in a consecutive chain.
+      bool showIcon = true;
+      if (index > 0) {
+        final prevMsg = messages[index - 1];
+        if (prevMsg["sender"] == messages[index]["sender"]) {
+          showIcon = false;
+        }
+      }
+
+      // Set a fixed width for the icon area.
+      const double iconAreaWidth = 40.0;
+      const double spacing = 8.0;
+
+      Widget iconWidget;
+      if (showIcon) {
+        if (isUser) {
+          // For user messages: icon on the top right with blue background.
+          iconWidget = Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Container(
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.blueAccent,
+              ),
+              padding: const EdgeInsets.all(4),
+              child: const Icon(Icons.account_circle, color: Colors.white),
+            ),
+          );
+        } else {
+          // For bot messages: icon on the top left with a greyish background.
+          iconWidget = Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.grey.shade700,
+              ),
+              padding: const EdgeInsets.all(4),
+              child: const Icon(Icons.smart_toy, color: Colors.white),
+            ),
+          );
+        }
+      } else {
+        // Reserve the same space with an invisible widget.
+        iconWidget = const SizedBox(width: iconAreaWidth);
+      }
+
+      // Build a row that always reserves the icon area.
+      if (isUser) {
+        return Align(
+          alignment: Alignment.centerRight,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment:
+                CrossAxisAlignment.start, // Align children to the top.
+            children: [
+              Flexible(child: messageWidget),
+              const SizedBox(width: spacing),
+              SizedBox(width: iconAreaWidth, child: iconWidget),
+            ],
+          ),
+        );
+      } else {
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment:
+                CrossAxisAlignment.start, // Align children to the top.
+            children: [
+              SizedBox(width: iconAreaWidth, child: iconWidget),
+              const SizedBox(width: spacing),
+              Flexible(child: messageWidget),
+            ],
+          ),
+        );
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -224,16 +320,18 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Expanded(
             child: ListView.builder(
-              controller: _scrollController, // Attach the scroll controller.
+              controller: _scrollController,
               padding: const EdgeInsets.all(10),
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 final msg = messages[index];
+                final String sender = msg["sender"] ?? "bot";
+                final bool isUser = sender == "user";
+
+                // For text messages, build a styled bubble.
                 if (msg["type"] == "text") {
-                  bool isUser = msg["sender"] == "user";
-                  return Align(
-                    alignment:
-                        isUser ? Alignment.centerRight : Alignment.centerLeft,
+                  final bubble = ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxBubbleWidth),
                     child: Container(
                       margin: const EdgeInsets.symmetric(vertical: 4),
                       padding: const EdgeInsets.all(12),
@@ -246,65 +344,40 @@ class _ChatScreenState extends State<ChatScreen> {
                         style:
                             const TextStyle(color: Colors.white, fontSize: 20),
                       ),
-                    ).animate().fade(duration: 300.ms).slideX(
-                        begin: isUser
-                            ? 1
-                            : -1), // User slides from left, bot from right.
-                  );
-                } else if (msg["type"] == "bus") {
+                    ),
+                  ).animate().fade(duration: 300.ms).slideX(
+                        begin: isUser ? 1 : -1,
+                      );
+                  return buildMessageWithIcon(bubble, index, isUser);
+                }
+                // For card messages, wrap the card widget similarly.
+                else if (msg["type"] == "bus") {
                   final busCard = msg["data"] as BusCard;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: busCard,
-                  );
+                  return buildMessageWithIcon(busCard, index, isUser);
                 } else if (msg["type"] == "airplane") {
                   final airplaneCard = msg["data"] as AirplaneCard;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: airplaneCard,
-                  );
+                  return buildMessageWithIcon(airplaneCard, index, isUser);
                 } else if (msg["type"] == "amazon") {
                   final amazonCard = msg["data"] as AmazonCard;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: amazonCard,
-                  );
+                  return buildMessageWithIcon(amazonCard, index, isUser);
                 } else if (msg["type"] == "airbnb") {
                   final airbnbCard = msg["data"] as AirbnbCard;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: airbnbCard,
-                  );
+                  return buildMessageWithIcon(airbnbCard, index, isUser);
                 } else if (msg["type"] == "booking") {
                   final bookingCard = msg["data"] as BookingCard;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: bookingCard,
-                  );
+                  return buildMessageWithIcon(bookingCard, index, isUser);
                 } else if (msg["type"] == "restaurant") {
                   final restaurantCard = msg["data"] as RestaurantCard;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: restaurantCard,
-                  );
+                  return buildMessageWithIcon(restaurantCard, index, isUser);
                 } else if (msg["type"] == "fashion") {
                   final fashionCard = msg["data"] as FashionShopping;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: fashionCard,
-                  );
+                  return buildMessageWithIcon(fashionCard, index, isUser);
                 } else if (msg["type"] == "movieslist") {
                   final movieslist = msg["data"] as MovieList;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: movieslist,
-                  );
+                  return buildMessageWithIcon(movieslist, index, isUser);
                 } else if (msg["type"] == "mtime") {
                   final movietimes = msg["data"] as MoviesTimingCard;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: movietimes,
-                  );
+                  return buildMessageWithIcon(movietimes, index, isUser);
                 }
                 return const SizedBox.shrink();
               },
