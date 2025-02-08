@@ -312,7 +312,7 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         centerTitle: true,
         backgroundColor: Colors.blueAccent,
-        leading: const Icon(Icons.chat_bubble, color: Colors.white),
+        // The leading property has been removed to eliminate the top left icon.
       ),
       body: Column(
         children: [
