@@ -49,14 +49,15 @@ class _ChatScreenState extends State<ChatScreen> {
 
   // Every message now includes a "sender" property.
   List<Map<String, dynamic>> messages = [];
-  bool _isLoading = false; // Tracks if a message is being sent/waiting for a response.
+  bool _isLoading = false; // Indicates whether a message is being processed.
+  http.Client? _client; // HTTP client for making/canceling requests.
 
   /// Sends the message to the server and waits for the reply.
   Future<String> sendString(String message) async {
-    final url = Uri.parse(
-        'https://stirred-bream-largely.ngrok-free.app'); // Replace with your URL
+    final url = Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Replace with your URL
+    _client = http.Client();
     try {
-      final response = await http
+      final response = await _client!
           .post(
             url,
             headers: {"Content-Type": "text/plain"},
@@ -69,6 +70,9 @@ class _ChatScreenState extends State<ChatScreen> {
             },
           );
 
+      _client?.close();
+      _client = null;
+
       if (response.statusCode == 200) {
         return response.body;
       } else {
@@ -80,7 +84,25 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  /// Called when the send button is pressed or Enter is hit.
+  /// Cancels the current message processing.
+  void _cancelMessage() {
+    // Cancel the HTTP request if still in progress.
+    _client?.close();
+    _client = null;
+    setState(() {
+      _isLoading = false;
+      // Remove the loading indicator message if it exists.
+      if (messages.isNotEmpty && messages.last["type"] == "loading") {
+        messages.removeLast();
+      }
+      // Also remove the last user message that initiated the request.
+      if (messages.isNotEmpty && messages.last["sender"] == "user") {
+        messages.removeLast();
+      }
+    });
+  }
+
+  /// Called when the send (or stop) button is pressed.
   Future<void> _sendMessage() async {
     if (_controller.text.isEmpty) return;
     final inputText = _controller.text.trim();
@@ -94,7 +116,7 @@ class _ChatScreenState extends State<ChatScreen> {
       return;
     }
 
-    // Disable the input and send button.
+    // Add the user message and disable further input.
     setState(() {
       _isLoading = true;
       messages.add({
@@ -113,8 +135,13 @@ class _ChatScreenState extends State<ChatScreen> {
       });
     });
 
-    // Wait until the HTTP request completes (i.e. wait for the reply).
+    // Wait until the HTTP request completes.
     String response = await sendString(inputText);
+
+    // If the request was canceled, _isLoading would be false.
+    if (!_isLoading) {
+      return;
+    }
 
     // Remove the loading indicator message.
     setState(() {
@@ -130,7 +157,6 @@ class _ChatScreenState extends State<ChatScreen> {
           "sender": "system",
         });
       } else {
-        // Based on the input, add cards or a text message.
         if (inputText.startsWith("bus")) {
           addBusCardsToMessages();
         } else if (inputText.startsWith("airplane")) {
@@ -150,7 +176,6 @@ class _ChatScreenState extends State<ChatScreen> {
         } else if (inputText.startsWith("movieslist")) {
           addMoviesListCardsToMessages();
         } else {
-          // Use the server's response as the bot's reply.
           messages.add({
             "type": "text",
             "text": response,
@@ -158,14 +183,13 @@ class _ChatScreenState extends State<ChatScreen> {
           });
         }
       }
-      // Re-enable the input and send button.
       _isLoading = false;
     });
 
     _controller.clear();
     _focusNode.requestFocus();
 
-    // Scroll to bottom after the frame updates.
+    // Scroll to bottom after frame updates.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
@@ -290,18 +314,16 @@ class _ChatScreenState extends State<ChatScreen> {
     _controller.dispose();
     _focusNode.dispose();
     _scrollController.dispose();
+    _client?.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Calculate a max width for message bubbles (e.g. 70% of screen width)
     final maxBubbleWidth = MediaQuery.of(context).size.width * 0.7;
 
-    /// Helper function to wrap any message widget with an icon (or a reserved space)
-    /// so that the horizontal spacing is uniform.
+    /// Helper to wrap a message widget with an icon.
     Widget buildMessageWithIcon(Widget messageWidget, int index, bool isUser) {
-      // Determine if this is the first message in a consecutive chain.
       bool showIcon = true;
       if (index > 0) {
         final prevMsg = messages[index - 1];
@@ -310,20 +332,17 @@ class _ChatScreenState extends State<ChatScreen> {
         }
       }
 
-      // Set a fixed width for the icon area.
       const double iconAreaWidth = 40.0;
       const double spacing = 8.0;
-
       Widget iconWidget;
       if (showIcon) {
         if (isUser) {
-          // For user messages: icon on the top right in blue.
           iconWidget = Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.blue, // Background color
+                color: Colors.blue,
               ),
               padding: const EdgeInsets.all(4.0),
               alignment: Alignment.center,
@@ -335,7 +354,6 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           );
         } else {
-          // For bot (or system/loading) messages: icon on the top left in grey.
           iconWidget = Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Container(
@@ -354,11 +372,9 @@ class _ChatScreenState extends State<ChatScreen> {
           );
         }
       } else {
-        // Reserve the same space with an invisible widget.
         iconWidget = const SizedBox(width: iconAreaWidth);
       }
 
-      // Build a row that always reserves the icon area.
       if (isUser) {
         return Align(
           alignment: Alignment.centerRight,
@@ -409,7 +425,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 final String sender = msg["sender"] ?? "bot";
                 final bool isUser = sender == "user";
 
-                // For text messages, build a styled bubble.
                 if (msg["type"] == "text") {
                   final bubble = ConstrainedBox(
                     constraints: BoxConstraints(maxWidth: maxBubbleWidth),
@@ -429,9 +444,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         begin: isUser ? 1 : -1,
                       );
                   return buildMessageWithIcon(bubble, index, isUser);
-                }
-                // Render a loading indicator message.
-                else if (msg["type"] == "loading") {
+                } else if (msg["type"] == "loading") {
                   final bubble = ConstrainedBox(
                     constraints: BoxConstraints(maxWidth: maxBubbleWidth),
                     child: Container(
@@ -457,7 +470,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       );
                   return buildMessageWithIcon(bubble, index, isUser);
                 }
-                // For card messages, wrap the card widget similarly.
+                // Card messages...
                 else if (msg["type"] == "bus") {
                   final busCard = msg["data"] as BusCard;
                   return buildMessageWithIcon(busCard, index, isUser);
@@ -495,34 +508,37 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Row(
               children: [
                 Expanded(
-                  // Disable the text field while waiting for a response.
-                  child: TextField(
-                    controller: _controller,
-                    focusNode: _focusNode,
-                    enabled: !_isLoading,
-                    style: const TextStyle(color: Colors.white),
-                    onSubmitted: (value) => _sendMessage(),
-                    textInputAction: TextInputAction.send,
-                    decoration: InputDecoration(
-                      hintText: "Ask something...",
-                      hintStyle: const TextStyle(color: Colors.grey),
-                      filled: true,
-                      fillColor: Colors.grey[900],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
+                  child: Opacity(
+                    opacity: _isLoading ? 0.5 : 1.0,
+                    child: TextField(
+                      controller: _controller,
+                      focusNode: _focusNode,
+                      enabled: !_isLoading,
+                      style: const TextStyle(color: Colors.white),
+                      onSubmitted: (value) => _sendMessage(),
+                      textInputAction: TextInputAction.send,
+                      decoration: InputDecoration(
+                        hintText: "Ask something...",
+                        hintStyle: const TextStyle(color: Colors.grey),
+                        filled: true,
+                        fillColor: _isLoading ? Colors.grey : Colors.grey[900],
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
                       ),
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
-                // Disable the send button while waiting for a response.
+                // When processing, show a stop button with a red background; otherwise, show the send button.
                 FloatingActionButton(
-                  backgroundColor: Colors.blueAccent,
-                  onPressed: _isLoading ? null : _sendMessage,
-                  child: Icon(Icons.send, color: Colors.white)
-                      .animate()
-                      .scale(duration: 200.ms),
+                  backgroundColor: _isLoading ? Colors.red : Colors.blueAccent,
+                  onPressed: _isLoading ? _cancelMessage : _sendMessage,
+                  child: Icon(
+                    _isLoading ? Icons.stop : Icons.send,
+                    color: Colors.white,
+                  ).animate().scale(duration: 200.ms),
                 ),
               ],
             ),
