@@ -155,7 +155,7 @@ class AirplaneCard extends StatelessWidget {
                     style: const TextStyle(color: Colors.white),
                   ),
                   Text(
-                    "Nonstop: $nonstop",
+                    nonstop.toLowerCase() == "yes" ? "Nonstop" : nonstop.toLowerCase() == "no" ? "Layover" : "N/A",
                     style: const TextStyle(color: Colors.white),
                   ),
                 ],
@@ -197,7 +197,7 @@ List<AirplaneCard> getAirplaneCards() {
       "arrival_date": "10 Feb",
       "duration": "01h 30m",
       "final_price": "1,516",
-      "nonstop": "Non Stop",
+      "nonstop": "No",
       "seats_available": "20",
       "url": "https://www.goindigo.in/flight-status.html"
     },
