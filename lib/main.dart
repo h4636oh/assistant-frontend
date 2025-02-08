@@ -186,6 +186,17 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  /// Adds movies list card messages.
+  void addMoviesListCardsToMessages() {
+    List<MovieList> moviesCards = getMoviesListCards();
+    for (var moviesCard in moviesCards) {
+      messages.add({
+        "type": "movieslist",
+        "data": moviesCard,
+      });
+    }
+  }
+
   @override
   void dispose() {
     _controller.dispose();
@@ -277,11 +288,11 @@ class _ChatScreenState extends State<ChatScreen> {
                     alignment: Alignment.centerLeft,
                     child: fashionCard,
                   );
-                } else if (msg["type"] == "mtime") {
-                  final moviesTimingsCard = msg["data"] as MoviesTimingCard;
+                } else if (msg["type"] == "movieslist") {
+                  final fashionCard = msg["data"] as MovieList;
                   return Align(
                     alignment: Alignment.centerLeft,
-                    child: moviesTimingsCard,
+                    child: fashionCard,
                   );
                 }
                 return const SizedBox.shrink();
