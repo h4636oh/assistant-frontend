@@ -66,8 +66,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   /// Sends the message to the server and waits for the reply.
   Future<String> sendString(String message) async {
-    final url = Uri.parse(
-        'https://mighty-sailfish-touched.ngrok-free.app'); // Replace with your URL
+    // final url = Uri.parse('https://mighty-sailfish-touched.ngrok-free.app'); // Piyush
+    final url = Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Deepanshu
     _client = http.Client();
     try {
       final response = await _client!
