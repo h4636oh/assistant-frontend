@@ -1,21 +1,32 @@
 // lib/main.dart
 // ignore_for_file: library_private_types_in_public_api
 
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:http/http.dart' as http;
-import 'dart:io';
-import 'card/bus_card.dart';
-import 'card/airplane_card.dart';
+
 import 'card/airbnb_card.dart';
+import 'card/airplane_card.dart';
 import 'card/amazon_card.dart';
 import 'card/booking_dot_com_card.dart';
-import 'card/restaurant_card.dart';
+import 'card/bus_card.dart';
 import 'card/fashion_shopping.dart';
 import 'card/movies_list.dart';
 import 'card/movies_timing.dart';
 import 'card/perplexity_card.dart';
+import 'card/restaurant_card.dart';
 import 'card/uber_card.dart';
+
+/// Global conversation history.
+/// Every message (text or card data) is stored as:
+/// {
+///    "role": "user" or "assistant",
+///    "content": "<a single string>"
+/// }
+List<Map<String, dynamic>> conversationMessages = [];
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -60,25 +71,29 @@ class _ChatScreenState extends State<ChatScreen> {
   final FocusNode _focusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
 
-  // Every message now includes a "sender" property.
+  // Local UI messages list. Each message is either a text message or a card widget.
   List<Map<String, dynamic>> messages = [];
   bool _isLoading = false; // Indicates whether a message is being processed.
   http.Client? _client; // HTTP client for making/canceling requests.
 
-  /// Sends the message to the server and waits for the reply.
+  /// Sends the entire conversation history (as JSON) to the backend HTTPS endpoint.
   Future<String> sendString(String message) async {
-    // final url = Uri.parse('https://mighty-sailfish-touched.ngrok-free.app'); // Piyush
-    final url = Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Deepanshu
+    // Replace the URL below with your backend HTTPS endpoint.
+    final url = Uri.parse('https://stirred-bream-largely.ngrok-free.app');
     _client = http.Client();
+
+    // Send the full conversation history as JSON.
+    final body = jsonEncode(conversationMessages);
+
     try {
       final response = await _client!
           .post(
         url,
-        headers: {"Content-Type": "text/plain"},
-        body: message,
+        headers: {"Content-Type": "application/json"},
+        body: body,
       )
           .timeout(
-        const Duration(seconds: 30), // Timeout to prevent infinite waiting
+        const Duration(seconds: 30),
         onTimeout: () {
           throw Exception('Request timed out');
         },
@@ -100,12 +115,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
   /// Cancels the current message processing.
   void _cancelMessage() {
-    // Cancel the HTTP request if still in progress.
     _client?.close();
     _client = null;
     setState(() {
       _isLoading = false;
-      // Remove the loading indicator message if it exists.
+      // Remove the loading indicator message if present.
       if (messages.isNotEmpty && messages.last["type"] == "loading") {
         messages.removeLast();
       }
@@ -126,11 +140,12 @@ class _ChatScreenState extends State<ChatScreen> {
       setState(() {
         messages.clear();
       });
+      conversationMessages.clear();
       _controller.clear();
       return;
     }
 
-    // Add the user message and disable further input.
+    // Add the user message to the UI and to the global conversation.
     setState(() {
       _isLoading = true;
       messages.add({
@@ -138,6 +153,10 @@ class _ChatScreenState extends State<ChatScreen> {
         "text": inputText,
         "sender": "user",
       });
+    });
+    conversationMessages.add({
+      "role": "user",
+      "content": inputText,
     });
 
     // Add a loading indicator message.
@@ -149,15 +168,15 @@ class _ChatScreenState extends State<ChatScreen> {
       });
     });
 
-    // Wait until the HTTP request completes.
+    // Send the entire conversation to the backend.
     String response = await sendString(inputText);
 
-    // If the request was canceled, _isLoading would be false.
+    // If the request was canceled, exit early.
     if (!_isLoading) {
       return;
     }
 
-    // Remove the loading indicator message.
+    // Remove the loading indicator.
     setState(() {
       messages.removeAt(loadingMessageIndex);
     });
@@ -170,7 +189,12 @@ class _ChatScreenState extends State<ChatScreen> {
           "text": response,
           "sender": "system",
         });
+        conversationMessages.add({
+          "role": "assistant",
+          "content": response,
+        });
       } else {
+        // If the input starts with a command to show cards, add the corresponding card messages.
         if (inputText.startsWith("bus")) {
           addBusCardsToMessages();
         } else if (inputText.startsWith("airplane")) {
@@ -194,20 +218,25 @@ class _ChatScreenState extends State<ChatScreen> {
         } else if (inputText.startsWith("uber")) {
           addUberCardsToMessages();
         } else {
+          // For a normal text response, add it.
           messages.add({
             "type": "text",
             "text": response,
             "sender": "bot",
           });
+          conversationMessages.add({
+            "role": "assistant",
+            "content": response,
+          });
         }
+        _isLoading = false;
       }
-      _isLoading = false;
     });
 
     _controller.clear();
     _focusNode.requestFocus();
 
-    // Scroll to bottom after frame updates.
+    // Scroll to the bottom.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
@@ -219,134 +248,327 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+  /// ===========================
+  /// CARD ADDITION FUNCTIONS
+  /// ===========================
+
   /// Adds Uber card messages.
   void addUberCardsToMessages() {
+    // Raw data for Uber card.
+    final List<Map<String, dynamic>> uberDataList = [
+      {
+        'type': 'Uber',
+        'url':
+            'https://m.uber.com/go/product-selection?drop%5B0%5D=%7B%22addressLine1%22%3A%22Marine%20Drive%22%2C%22addressLine2%22%3A%22Kochi%2C%20Kerala%22%2C%22id%22%3A%22ChIJrYrKf1MNCDsR6gNsW6zTGHc%22%2C%22source%22%3A%22SEARCH%22%2C%22latitude%22%3A9.9771685%2C%22longitude%22%3A76.2773228%7D&effect=&pickup=%7B%22addressLine1%22%3A%22Siddhi%20Vinayak%20Industry%22%2C%22addressLine2%22%3A%229WFH%2B9VV%2C%20Verna%20Industrial%20Estate%2C%20Kesarvale%2C%20Goa%22%2C%22id%22%3A%22ChIJJzsQfFa3vzsRDFuFEkXAzp8%22%2C%22source%22%3A%22SEARCH%22%2C%22latitude%22%3A15.3734797%2C%22longitude%22%3A73.9296825%2C%22provider%22%3A%22google_places%22%7D',
+        'pickup': {
+          'name': 'Siddhi Vinayak Industry',
+          'address': '9WFH+9VV, Verna Industrial Estate, Kesarvale, Goa',
+          'latitude': 15.3734797,
+          'longitude': 73.9296825,
+        },
+        'dropoff': {
+          'name': 'Marine Drive',
+          'address': 'Kochi, Kerala',
+          'latitude': 9.9771685,
+          'longitude': 76.2773228,
+        },
+      }
+    ];
     List<UberCard> uberCards = getUberCards();
-    for (var uberCard in uberCards) {
+    for (int i = 0; i < uberCards.length; i++) {
       messages.add({
         "type": "uber",
-        "data": uberCard,
+        "data": uberCards[i],
         "sender": "bot",
+      });
+      final data =
+          (i < uberDataList.length) ? uberDataList[i] : uberDataList[0];
+      conversationMessages.add({
+        "role": "assistant",
+        "content": jsonEncode(data),
       });
     }
   }
 
-  /// Adds Movie Timings card messages.
-  void addMovieTimeingCardToMessages() {
-    List<MoviesTimingCard> moviesTimingCards = getMoviesTimingCards();
-    for (var moviesTimingCard in moviesTimingCards) {
-      messages.add({
-        "type": "mtime",
-        "data": moviesTimingCard,
-        "sender": "bot",
-      });
-    }
-  }
-
-  /// Adds bus card messages.
+  /// Adds Bus card messages.
   void addBusCardsToMessages() {
+    final List<Map<String, dynamic>> busDataList = [
+      {
+        "bus_name": "NueGo",
+        "bus_type": "AC Seater 2+2 Electric",
+        "departure_time": "11:30 PM",
+        "departure_date": "10 Feb",
+        "arrival_time": "05:05 AM",
+        "arrival_date": "11 Feb",
+        "duration": "05h 35m",
+        "final_price": "346",
+        "rating": "3.5",
+        "seats_available": "17",
+        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
+      },
+      {
+        "bus_name": "NueGo",
+        "bus_type": "AC Seater 2+2 Electric",
+        "departure_time": "11:00 PM",
+        "departure_date": "10 Feb",
+        "arrival_time": "04:35 AM",
+        "arrival_date": "11 Feb",
+        "duration": "05h 35m",
+        "final_price": "346",
+        "rating": "3.6",
+        "seats_available": "20",
+        "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
+      }
+    ];
     List<BusCard> busCards = getBusCards();
-    for (var busCard in busCards) {
+    for (int i = 0; i < busCards.length; i++) {
       messages.add({
         "type": "bus",
-        "data": busCard,
+        "data": busCards[i],
         "sender": "bot",
+      });
+      final data = (i < busDataList.length) ? busDataList[i] : busDataList[0];
+      conversationMessages.add({
+        "role": "assistant",
+        "content": jsonEncode(data),
       });
     }
   }
 
-  /// Adds airplane card messages.
+  /// Adds Airplane card messages.
   void addAirplaneCardsToMessages() {
+    final List<Map<String, dynamic>> airplaneDataList = [
+      {
+        "airline": "Airline Name",
+        "flight_number": "123",
+        "departure_time": "10:00 AM",
+        "arrival_time": "12:00 PM",
+        "duration": "2h",
+        "price": "5000",
+        "url": "https://example.com/airplane/123"
+      }
+    ];
     List<AirplaneCard> airplaneCards = getAirplaneCards();
-    for (var airplaneCard in airplaneCards) {
+    for (int i = 0; i < airplaneCards.length; i++) {
       messages.add({
         "type": "airplane",
-        "data": airplaneCard,
+        "data": airplaneCards[i],
         "sender": "bot",
+      });
+      final data = (i < airplaneDataList.length)
+          ? airplaneDataList[i]
+          : airplaneDataList[0];
+      conversationMessages.add({
+        "role": "assistant",
+        "content": jsonEncode(data),
       });
     }
   }
 
-  /// Adds amazon card messages.
+  /// Adds Amazon card messages.
   void addAmazonCardsToMessages() {
+    final List<Map<String, dynamic>> amazonDataList = [
+      {
+        "product": "Sample Product",
+        "price": "₹999",
+        "rating": "4.5",
+        "url": "https://amazon.in/sample-product"
+      }
+    ];
     List<AmazonCard> amazonCards = getAmazonCards();
-    for (var amazonCard in amazonCards) {
+    for (int i = 0; i < amazonCards.length; i++) {
       messages.add({
         "type": "amazon",
-        "data": amazonCard,
+        "data": amazonCards[i],
         "sender": "bot",
+      });
+      final data =
+          (i < amazonDataList.length) ? amazonDataList[i] : amazonDataList[0];
+      conversationMessages.add({
+        "role": "assistant",
+        "content": jsonEncode(data),
       });
     }
   }
 
-  /// Adds airbnb card messages.
+  /// Adds Airbnb card messages.
   void addAirbnbCardsToMessages() {
+    final List<Map<String, dynamic>> airbnbDataList = [
+      {
+        "listing": "Cozy Apartment",
+        "price_per_night": "₹2500",
+        "rating": "4.8",
+        "url": "https://airbnb.in/listing/cozy-apartment"
+      }
+    ];
     List<AirbnbCard> airbnbCards = getAirbnbCards();
-    for (var airbnbCard in airbnbCards) {
+    for (int i = 0; i < airbnbCards.length; i++) {
       messages.add({
         "type": "airbnb",
-        "data": airbnbCard,
+        "data": airbnbCards[i],
         "sender": "bot",
+      });
+      final data =
+          (i < airbnbDataList.length) ? airbnbDataList[i] : airbnbDataList[0];
+      conversationMessages.add({
+        "role": "assistant",
+        "content": jsonEncode(data),
       });
     }
   }
 
-  /// Adds booking dot com card messages.
+  /// Adds Booking.com card messages.
   void addBookingCardsToMessages() {
+    final List<Map<String, dynamic>> bookingDataList = [
+      {
+        "hotel": "Hotel Example",
+        "price": "₹3500",
+        "rating": "4.2",
+        "url": "https://booking.com/hotel/example"
+      }
+    ];
     List<BookingCard> bookingCards = getBookingCards();
-    for (var bookingCard in bookingCards) {
+    for (int i = 0; i < bookingCards.length; i++) {
       messages.add({
         "type": "booking",
-        "data": bookingCard,
+        "data": bookingCards[i],
         "sender": "bot",
+      });
+      final data = (i < bookingDataList.length)
+          ? bookingDataList[i]
+          : bookingDataList[0];
+      conversationMessages.add({
+        "role": "assistant",
+        "content": jsonEncode(data),
       });
     }
   }
 
-  /// Adds restaurant card messages.
+  /// Adds Restaurant card messages.
   void addRestaurantCardsToMessages() {
+    final List<Map<String, dynamic>> restaurantDataList = [
+      {
+        "restaurant": "The Food Place",
+        "cuisine": "Italian",
+        "rating": "4.7",
+        "url": "https://restaurant.example.com/thefoodplace"
+      }
+    ];
     List<RestaurantCard> restaurantCards = getRestaurantCards();
-    for (var restaurantCard in restaurantCards) {
+    for (int i = 0; i < restaurantCards.length; i++) {
       messages.add({
         "type": "restaurant",
-        "data": restaurantCard,
+        "data": restaurantCards[i],
         "sender": "bot",
+      });
+      final data = (i < restaurantDataList.length)
+          ? restaurantDataList[i]
+          : restaurantDataList[0];
+      conversationMessages.add({
+        "role": "assistant",
+        "content": jsonEncode(data),
       });
     }
   }
 
-  /// Adds fashion shopping card messages.
+  /// Adds Fashion Shopping card messages.
   void addFashionShoppingCardsToMessages() {
+    final List<Map<String, dynamic>> fashionDataList = [
+      {
+        "brand": "Fashion Brand",
+        "item": "Stylish Jacket",
+        "price": "₹2999",
+        "url": "https://fashion.example.com/stylish-jacket"
+      }
+    ];
     List<FashionShopping> fashionCards = getFashionCards();
-    for (var fashionCard in fashionCards) {
+    for (int i = 0; i < fashionCards.length; i++) {
       messages.add({
         "type": "fashion",
-        "data": fashionCard,
+        "data": fashionCards[i],
         "sender": "bot",
+      });
+      final data = (i < fashionDataList.length)
+          ? fashionDataList[i]
+          : fashionDataList[0];
+      conversationMessages.add({
+        "role": "assistant",
+        "content": jsonEncode(data),
       });
     }
   }
 
-  /// Adds movies list card messages.
+  /// Adds Movies List card messages.
   void addMoviesListCardsToMessages() {
+    final List<Map<String, dynamic>> moviesListData = [
+      {
+        "movies": ["Movie 1", "Movie 2", "Movie 3"],
+        "url": "https://movies.example.com/list"
+      }
+    ];
     List<MovieList> moviesCards = getMoviesListCards();
-    for (var moviesCard in moviesCards) {
+    for (int i = 0; i < moviesCards.length; i++) {
       messages.add({
         "type": "movieslist",
-        "data": moviesCard,
+        "data": moviesCards[i],
         "sender": "bot",
+      });
+      final data =
+          (i < moviesListData.length) ? moviesListData[i] : moviesListData[0];
+      conversationMessages.add({
+        "role": "assistant",
+        "content": jsonEncode(data),
       });
     }
   }
 
-  /// Adds perplexity card messages.
+  /// Adds Movies Timing card messages.
+  void addMovieTimeingCardToMessages() {
+    final List<Map<String, dynamic>> moviesTimingData = [
+      {
+        "movie": "Example Movie",
+        "showtimes": ["1:00 PM", "4:00 PM", "7:00 PM"],
+        "url": "https://movies.example.com/timing"
+      }
+    ];
+    List<MoviesTimingCard> moviesTimingCards = getMoviesTimingCards();
+    for (int i = 0; i < moviesTimingCards.length; i++) {
+      messages.add({
+        "type": "mtime",
+        "data": moviesTimingCards[i],
+        "sender": "bot",
+      });
+      final data = (i < moviesTimingData.length)
+          ? moviesTimingData[i]
+          : moviesTimingData[0];
+      conversationMessages.add({
+        "role": "assistant",
+        "content": jsonEncode(data),
+      });
+    }
+  }
+
+  /// Adds Perplexity card messages.
   void addPerplexityCardsToMessages() {
+    final List<Map<String, dynamic>> perplexityData = [
+      {
+        "query": "Example query",
+        "answer": "Example answer from Perplexity.",
+        "url": "https://perplexity.ai/example"
+      }
+    ];
     List<PerplexityCard> perplexityCards = getPerplexityCards();
-    for (var perplexityCard in perplexityCards) {
+    for (int i = 0; i < perplexityCards.length; i++) {
       messages.add({
         "type": "perplexity",
-        "data": perplexityCard,
+        "data": perplexityCards[i],
         "sender": "bot",
+      });
+      final data =
+          (i < perplexityData.length) ? perplexityData[i] : perplexityData[0];
+      conversationMessages.add({
+        "role": "assistant",
+        "content": jsonEncode(data),
       });
     }
   }
@@ -382,13 +604,13 @@ class _ChatScreenState extends State<ChatScreen> {
           iconWidget = Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.blue,
               ),
               padding: const EdgeInsets.all(4.0),
               alignment: Alignment.center,
-              child: Icon(
+              child: const Icon(
                 Icons.person_rounded,
                 size: 30.0,
                 color: Colors.white,
@@ -405,7 +627,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               padding: const EdgeInsets.all(4.0),
               alignment: Alignment.center,
-              child: Icon(
+              child: const Icon(
                 Icons.smart_toy_rounded,
                 size: 30.0,
                 color: Colors.white,
@@ -479,8 +701,10 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       child: Text(
                         msg["text"],
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 20),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
                       ),
                     ),
                   ).animate().fade(duration: 300.ms).slideX(
@@ -514,7 +738,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       );
                   return buildMessageWithIcon(bubble, index, isUser);
                 }
-                // Card messages...
+                // Card messages.
                 else if (msg["type"] == "bus") {
                   final busCard = msg["data"] as BusCard;
                   return buildMessageWithIcon(busCard, index, isUser);
@@ -537,14 +761,13 @@ class _ChatScreenState extends State<ChatScreen> {
                   final fashionCard = msg["data"] as FashionShopping;
                   return buildMessageWithIcon(fashionCard, index, isUser);
                 } else if (msg["type"] == "movieslist") {
-                  final movieslist = msg["data"] as MovieList;
-                  return buildMessageWithIcon(movieslist, index, isUser);
+                  final moviesList = msg["data"] as MovieList;
+                  return buildMessageWithIcon(moviesList, index, isUser);
                 } else if (msg["type"] == "mtime") {
-                  final movietimes = msg["data"] as MoviesTimingCard;
-                  return buildMessageWithIcon(movietimes, index, isUser);
+                  final movieTimes = msg["data"] as MoviesTimingCard;
+                  return buildMessageWithIcon(movieTimes, index, isUser);
                 } else if (msg["type"] == "perplexity") {
                   final perplexity = msg["data"] as PerplexityCard;
-                  debugPrint(perplexity.toString());
                   return buildMessageWithIcon(perplexity, index, isUser);
                 } else if (msg["type"] == "uber") {
                   final uberCard = msg["data"] as UberCard;
@@ -582,7 +805,6 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                // When processing, show a stop button with a red background; otherwise, show the send button.
                 FloatingActionButton(
                   backgroundColor: _isLoading ? Colors.red : Colors.blueAccent,
                   onPressed: _isLoading ? _cancelMessage : _sendMessage,
