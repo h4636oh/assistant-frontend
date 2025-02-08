@@ -62,100 +62,102 @@ class AirbnbCard extends StatelessWidget {
           }
         });
       },
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-        elevation: 4,
-        child: Stack(
-          children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16.0),
-                  child: Image.network(
-                    imageUrl,
-                    height: 250,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.75, // Set width to 3/4 of viewport
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          elevation: 4,
+          child: Stack(
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16.0),
+                    child: Image.network(
+                      imageUrl,
+                      height: 250,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Text(
+                      hotelName,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Text(
+                      location,
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.star, color: Colors.orange, size: 18),
+                            const SizedBox(width: 4),
+                            Text(
+                              ratingReviews,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          '₹${totalPrice.toStringAsFixed(0)}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+              ),
+              Positioned(
+                top: 10,
+                left: 10,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(80, 0, 0, 0),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   child: Text(
-                    hotelName,
+                    tagText,
                     style: const TextStyle(
-                      fontSize: 18,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
+                      fontSize: 14,
                     ),
                   ),
                 ),
-                const SizedBox(height: 4),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Text(
-                    location,
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.star, color: Colors.orange, size: 18),
-                          const SizedBox(width: 4),
-                          Text(
-                            ratingReviews,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Text(
-                        '₹${totalPrice.toStringAsFixed(0)} total',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 12),
-              ],
-            ),
-            Positioned(
-              top: 10,
-              left: 10,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(80, 0, 0, 0),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  tagText,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
               ),
-            ),
-          ],
-        ),
-      ).animate().fade(duration: 500.ms).slideY(),
+            ],
+          ),
+        ).animate().fade(duration: 500.ms).slideY(),
+      ),
     );
   }
 }
@@ -168,7 +170,7 @@ List<AirbnbCard> getAirbnbCards() {
       "hotel_name": "Luxury 3BHK Penthouse in South Delhi",
       "location": "Delhi, India",
       "rating_reviews": "4.95 (135 reviews)",
-      "total_price": "₹ 15,000",  // String issue here
+      "total_price": "₹ 15,000",
       "tag_text": "Luxury"
     },
     {
@@ -177,7 +179,7 @@ List<AirbnbCard> getAirbnbCards() {
       "hotel_name": "Cozy 1BHK Flat in South Delhi",
       "location": "Delhi, India",
       "rating_reviews": "4.78 (58 reviews)",
-      "total_price": "₹ 8,000",  // String issue here
+      "total_price": "₹ 8,000",
       "tag_text": "Cozy"
     }
   ];
@@ -189,7 +191,7 @@ List<AirbnbCard> getAirbnbCards() {
       hotelName: airbnbData["hotel_name"],
       location: airbnbData["location"],
       ratingReviews: airbnbData["rating_reviews"],
-      totalPrice: double.parse(airbnbData["total_price"].replaceAll(RegExp(r'[^\d.]'), '')), // FIX HERE
+      totalPrice: double.parse(airbnbData["total_price"].replaceAll(RegExp(r'[^0-9.]'), '')),
       tagText: airbnbData["tag_text"],
     );
   }).toList();

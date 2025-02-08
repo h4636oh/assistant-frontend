@@ -1,4 +1,3 @@
-// lib/card/amazon_card.dart
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -36,8 +35,9 @@ class AmazonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double cardWidth = MediaQuery.of(context).size.width * 0.75;
+
     return GestureDetector(
-      // On tap, show a confirmation dialog before launching the URL.
       onTap: () {
         showDialog<bool>(
           context: context,
@@ -74,104 +74,104 @@ class AmazonCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.0),
         ),
         elevation: 4,
-        child: Stack(
-          children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // The image container (UI remains unchanged)
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white, // Matches the card's background color
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(16.0),
-                    ),
-                  ),
-                  child: Image.network(
-                    imageUrl,
-                    height: 300,
-                    width: double.infinity,
-                    fit: BoxFit.contain, // Keep the image size unchanged
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Text(
-                    numberOfBuyers,
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: const [
-                          Icon(Icons.star, color: Colors.orange, size: 18),
-                          SizedBox(width: 4),
-                        ],
-                      ),
-                      Text(
-                        '$rating ($reviewCount reviews)',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      Text(
-                        '₹${price.toStringAsFixed(0)}',
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 12),
-              ],
-            ),
-            // Display amazonChoice badge if available (UI remains unchanged)
-            if (amazonChoice != null && amazonChoice!.isNotEmpty)
-              Positioned(
-                top: 10,
-                left: 10,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(80, 0, 0, 0),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    amazonChoice!,
-                    style: const TextStyle(
+        child: SizedBox(
+          width: cardWidth,
+          child: Stack(
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
                       color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(16.0),
+                      ),
+                    ),
+                    child: Image.network(
+                      imageUrl,
+                      height: 300,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Text(
+                      numberOfBuyers,
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.star, color: Colors.orange, size: 18),
+                            const SizedBox(width: 4),
+                            Text(
+                              '$rating ($reviewCount reviews)',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          '₹${price.toStringAsFixed(0)}',
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+              ),
+              if (amazonChoice != null && amazonChoice!.isNotEmpty)
+                Positioned(
+                  top: 10,
+                  left: 10,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(80, 0, 0, 0),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      amazonChoice!,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -181,11 +181,9 @@ class AmazonCard extends StatelessWidget {
 List<AmazonCard> getAmazonCards() {
   final List<Map<String, dynamic>> amazonDataList = [
     {
-      "image_url":
-          "https://m.media-amazon.com/images/I/81fvJauBWDL._AC_UY218_.jpg",
+      "image_url": "https://m.media-amazon.com/images/I/81fvJauBWDL._AC_UY218_.jpg",
       "product_url": "https://www.amazon.in/s?k=laptop#",
-      "title":
-          "Lenovo IdeaPad Slim 3 12th Gen Intel Core i5-12450H 14\" (35.5cm) FHD Thin & Light Laptop...",
+      "title": "Lenovo IdeaPad Slim 3 12th Gen Intel Core i5-12450H 14\" (35.5cm) FHD Thin & Light Laptop...",
       "number_of_buyers": "200+ bought in past month",
       "rating": "3.9",
       "review_count": "454",
@@ -193,8 +191,7 @@ List<AmazonCard> getAmazonCards() {
       "amazon_choice": "Best seller",
     },
     {
-      "image_url":
-          "https://m.media-amazon.com/images/I/81wO4cOZIvL._AC_UY218_.jpg",
+      "image_url": "https://m.media-amazon.com/images/I/81wO4cOZIvL._AC_UY218_.jpg",
       "product_url": "https://www.amazon.in/s?k=tablet#",
       "title": "Apple iPad (10.2-inch, Wi-Fi, 32GB) - Space Grey",
       "number_of_buyers": "100+ bought in past month",

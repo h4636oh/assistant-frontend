@@ -43,6 +43,8 @@ class BusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double cardWidth = MediaQuery.of(context).size.width * 0.75;
+
     // Wrap the card in a GestureDetector to add a confirmation dialog on tap.
     return GestureDetector(
       onTap: () {
@@ -80,103 +82,106 @@ class BusCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.grey[850],
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Bus name and type.
-              Text(
-                busName,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+        child: SizedBox(
+          width: cardWidth, // Set width to 3/4 of the screen width.
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey[850],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Bus name and type.
+                Text(
+                  busName,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-              Text(
-                busType,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[400],
+                Text(
+                  busType,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[400],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              // Departure and arrival information.
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Departure",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                const SizedBox(height: 10),
+                // Departure and arrival information.
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Departure",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      Text(
-                        "$departureTime, $departureDate",
-                        style: TextStyle(color: Colors.grey[400]),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      const Text(
-                        "Arrival",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                        Text(
+                          "$departureTime, $departureDate",
+                          style: TextStyle(color: Colors.grey[400]),
                         ),
-                      ),
-                      Text(
-                        "$arrivalTime, $arrivalDate",
-                        style: TextStyle(color: Colors.grey[400]),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              // Duration, rating, seats available, and price.
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Duration: $duration",
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  Text(
-                    "Rating: $rating",
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 5),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Seats: $seatsAvailable",
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  Text(
-                    "Price: ₹$finalPrice",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      ],
                     ),
-                  ),
-                ],
-              ),
-            ],
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        const Text(
+                          "Arrival",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          "$arrivalTime, $arrivalDate",
+                          style: TextStyle(color: Colors.grey[400]),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                // Duration, rating, seats available, and price.
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Duration: $duration",
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    Text(
+                      "Rating: $rating",
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Seats: $seatsAvailable",
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    Text(
+                      "Price: ₹$finalPrice",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ).animate().fade(duration: 500.ms).slideY(), // Adding animation

@@ -43,7 +43,6 @@ class AirplaneCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Wrap the card in a GestureDetector to add a confirmation dialog on tap.
     return GestureDetector(
       onTap: () {
         showDialog<bool>(
@@ -51,8 +50,8 @@ class AirplaneCard extends StatelessWidget {
           builder: (BuildContext dialogContext) {
             return AlertDialog(
               title: const Text("Confirmation"),
-              content:
-                  const Text("Do you want to proceed to the airplane website?"),
+              content: const Text(
+                  "Do you want to proceed to the airplane website?"),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -82,6 +81,7 @@ class AirplaneCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Container(
+          width: MediaQuery.of(context).size.width * 0.75, // 3/4 of viewport width
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.grey[850],
@@ -90,7 +90,7 @@ class AirplaneCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Plane name and type.
+              // Plane name and type
               Text(
                 planeName,
                 style: const TextStyle(
@@ -107,7 +107,7 @@ class AirplaneCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              // Departure and arrival information.
+              // Departure and arrival information
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -146,7 +146,7 @@ class AirplaneCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 10),
-              // Duration, nonstop status, seats available, and price.
+              // Duration, nonstop status, seats available, and price
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
