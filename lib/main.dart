@@ -50,16 +50,16 @@ class _ChatScreenState extends State<ChatScreen> {
   // Every message now includes a "sender" property.
   List<Map<String, dynamic>> messages = [];
 
-    Future<void> sendString(String message) async {
-    final url = Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Replace with your URL
-
+  /// Sends the message to the server and waits for the reply.
+  Future<void> sendString(String message) async {
+    final url = Uri.parse(
+        'https://stirred-bream-largely.ngrok-free.app'); // Replace with your URL
     try {
       final response = await http.post(
         url,
-        headers: {"Content-Type": "text/plain"}, // Specify content type
+        headers: {"Content-Type": "text/plain"},
         body: message,
       );
-
       if (response.statusCode == 200) {
         debugPrint('Success: ${response.body}');
       } else {
@@ -71,44 +71,50 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   /// Called when the send button is pressed or Enter is hit.
-  void _sendMessage() {
+  Future<void> _sendMessage() async {
     if (_controller.text.isEmpty) return;
 
-    
+    final inputText = _controller.text.trim();
+
+    // Process clear command immediately.
+    if (inputText == "clear()") {
+      setState(() {
+        messages.clear();
+      });
+      _controller.clear();
+      return;
+    }
+
+    // Wait until the HTTP request completes (i.e. wait for the reply).
+    await sendString(inputText);
+
     setState(() {
-    
-      sendString(_controller.text);
-      
       // Add the user message.
       messages.add({
         "type": "text",
-        "text": _controller.text,
+        "text": inputText,
         "sender": "user",
       });
 
       // Add cards based on the input.
-      if (_controller.text.startsWith("bus")) {
+      if (inputText.startsWith("bus")) {
         addBusCardsToMessages();
-      } else if (_controller.text.startsWith("airplane")) {
+      } else if (inputText.startsWith("airplane")) {
         addAirplaneCardsToMessages();
-      } else if (_controller.text.startsWith("amazon")) {
+      } else if (inputText.startsWith("amazon")) {
         addAmazonCardsToMessages();
-      } else if (_controller.text.startsWith("airbnb")) {
+      } else if (inputText.startsWith("airbnb")) {
         addAirbnbCardsToMessages();
-      } else if (_controller.text.startsWith("booking")) {
+      } else if (inputText.startsWith("booking")) {
         addBookingCardsToMessages();
-      } else if (_controller.text.startsWith("restaurant")) {
+      } else if (inputText.startsWith("restaurant")) {
         addRestaurantCardsToMessages();
-      } else if (_controller.text.startsWith("fashion")) {
+      } else if (inputText.startsWith("fashion")) {
         addFashionShoppingCardsToMessages();
-      } else if (_controller.text.startsWith("mtime")) {
+      } else if (inputText.startsWith("mtime")) {
         addMovieTimeingCardToMessages();
-      } else if (_controller.text.startsWith("movieslist")) {
+      } else if (inputText.startsWith("movieslist")) {
         addMoviesListCardsToMessages();
-      } else if (_controller.text.startsWith("clear()")) {
-        setState(() {
-          messages.clear();
-        });
       } else {
         messages.add({
           "type": "text",
@@ -117,6 +123,7 @@ class _ChatScreenState extends State<ChatScreen> {
         });
       }
     });
+
     _controller.clear();
     _focusNode.requestFocus();
 
@@ -280,11 +287,11 @@ class _ChatScreenState extends State<ChatScreen> {
                 shape: BoxShape.circle,
                 color: Colors.blue, // Background color
               ),
-              padding: const EdgeInsets.all(4.0), // Padding inside the circle
-              alignment: Alignment.center, // Center the icon horizontally
+              padding: const EdgeInsets.all(4.0),
+              alignment: Alignment.center,
               child: Icon(
                 Icons.person_rounded,
-                size: 30.0, // Adjusted size to fit within the circle
+                size: 30.0,
                 color: Colors.white,
               ),
             ),
@@ -296,13 +303,13 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.grey[800], // Background color
+                color: Colors.grey[800],
               ),
-              padding: const EdgeInsets.all(4.0), // Padding inside the circle
-              alignment: Alignment.center, // Center the icon horizontally
+              padding: const EdgeInsets.all(4.0),
+              alignment: Alignment.center,
               child: Icon(
                 Icons.smart_toy_rounded,
-                size: 30.0, // Adjusted size to fit within the circle
+                size: 30.0,
                 color: Colors.white,
               ),
             ),
@@ -319,8 +326,7 @@ class _ChatScreenState extends State<ChatScreen> {
           alignment: Alignment.centerRight,
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment:
-                CrossAxisAlignment.start, // Align children to the top.
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Flexible(child: messageWidget),
               const SizedBox(width: spacing),
@@ -333,8 +339,7 @@ class _ChatScreenState extends State<ChatScreen> {
           alignment: Alignment.centerLeft,
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment:
-                CrossAxisAlignment.start, // Align children to the top.
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(width: iconAreaWidth, child: iconWidget),
               const SizedBox(width: spacing),
