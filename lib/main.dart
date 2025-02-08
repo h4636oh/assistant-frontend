@@ -58,12 +58,7 @@ class _ChatScreenState extends State<ChatScreen> {
       } else if (_controller.text.startsWith("airplane")) {
         addAirplaneCardsToMessages();
       } else if (_controller.text.startsWith("amazon")) {
-        // addAmazonCardsToMessages();
-        messages.add({
-          "type": "text",
-          "text": "This is a amazon response.",
-          "sender": "bot",
-        });
+        addAmazonCardsToMessages();
       } else if (_controller.text.startsWith("airbnb")) {
         addAirbnbCardsToMessages();
       } else {
@@ -172,12 +167,12 @@ class _ChatScreenState extends State<ChatScreen> {
                     alignment: Alignment.centerLeft,
                     child: airplaneCard,
                   );
-                  // } else if (msg["type"] == "amazon") {
-                  //   final amazonCard = msg["data"] as AmazonCard;
-                  //   return Align(
-                  //     alignment: Alignment.centerLeft,
-                  //     child: amazonCard,
-                  //   );
+                } else if (msg["type"] == "amazon") {
+                  final amazonCard = msg["data"] as AmazonCard;
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: amazonCard,
+                  );
                 } else if (msg["type"] == "airbnb") {
                   final airbnbCard = msg["data"] as AirbnbCard;
                   return Align(
