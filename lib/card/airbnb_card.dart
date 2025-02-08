@@ -84,6 +84,15 @@ class AirbnbCard extends StatelessWidget {
                       height: 250,
                       width: double.infinity,
                       fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Center(
+                          child: Icon(Icons.image_not_supported, size: 50),
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -183,14 +192,12 @@ List<AirbnbCard> getAirbnbCards() {
     },
     {
       "image_url":
-          "https://a0.muscache.com/im/pictures/miso/Hosting-1035933384425563119/original/1bc23ddd-7343-4f2c-a2b5-55c060f14dfd.jpeg?im_w=720&im_format=avif",
-      "payment_url":
-          "https://www.airbnb.co.in/rooms/1252006468109509167?adults=1&search_mode=regular_search&check_in=2025-02-09&check_out=2025-02-14&source_impression_id=p3_1738780338_P3mUh3vS69u3_BV-&previous_page_section_name=1000&federated_search_id=c8193494-d40f-4203-9131-a4d179497cad",
+          "https://a0.muscache.com/im/pictures/miso/Hosting-836057693936248879/original/30b2b61d-3aa4-4653-8751-83252cdf7071.jpeg?im_w=720&im_format=avif",
       "payment_link":
           "https://www.airbnb.co.in/rooms/1252006468109509167?adults=1&search_mode=regular_search&check_in=2025-02-09&check_out=2025-02-14&source_impression_id=p3_1738780338_P3mUh3vS69u3_BV-&previous_page_section_name=1000&federated_search_id=c8193494-d40f-4203-9131-a4d179497cad",
-      "hotel_name": "Cozy 1BHK Flat in South Delhi",
-      "location": "Flat in North Goa",
-      "rating_reviews": "4.73 (22)",
+      "hotel_name": "Flat in Calangute",
+      "location": "Flat in Calangute near Scenic studio apartment at Baga",
+      "rating_reviews": "4.86 (74)",
       "total_price": "₹6,495 total",
       "tag_text": "Cozy"
     }

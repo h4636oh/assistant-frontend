@@ -95,6 +95,17 @@ class AmazonCard extends StatelessWidget {
                       height: 300,
                       width: double.infinity,
                       fit: BoxFit.contain,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const Center(
+                            child: CircularProgressIndicator());
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Center(
+                          child:
+                              Icon(Icons.image_not_supported, size: 50),
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -130,7 +141,7 @@ class AmazonCard extends StatelessWidget {
                                 color: Colors.orange, size: 18),
                             const SizedBox(width: 4),
                             Text(
-                              '$rating ($reviewCount reviews)',
+                              '$rating ($reviewCount)',
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
