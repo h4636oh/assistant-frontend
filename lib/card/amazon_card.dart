@@ -53,7 +53,8 @@ class ListingCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white, // Match the card's background color
                     borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(16.0), // Match the card's top border radius
+                      top: Radius.circular(
+                          16.0), // Match the card's top border radius
                     ),
                   ),
                   child: Image.network(
@@ -157,9 +158,11 @@ class MyApp extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: ListingCard(
-              imageUrl: "https://m.media-amazon.com/images/I/81fvJauBWDL._AC_UY218_.jpg",
+              imageUrl:
+                  "https://m.media-amazon.com/images/I/81fvJauBWDL._AC_UY218_.jpg",
               productUrl: "https://www.amazon.in/s?k=laptop#",
-              title: "Lenovo IdeaPad Slim 3 12th Gen Intel Core i5-12450H 14\" (35.5cm) FHD 250 Nits Thin & Light Laptop...",
+              title:
+                  "Lenovo IdeaPad Slim 3 12th Gen Intel Core i5-12450H 14\" (35.5cm) FHD 250 Nits Thin & Light Laptop...",
               numberOfBuyers: "200+ bought in past month",
               rating: "3.9",
               reviewCount: "454",
