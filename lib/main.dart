@@ -51,28 +51,33 @@ class _ChatScreenState extends State<ChatScreen> {
   List<Map<String, dynamic>> messages = [];
 
   /// Sends the message to the server and waits for the reply.
-  Future<void> sendString(String message) async {
+  Future<String> sendString(String message) async {
     final url = Uri.parse(
         'https://stirred-bream-largely.ngrok-free.app'); // Replace with your URL
     try {
-      final response = await http.post(
+      final response = await http
+          .post(
         url,
         headers: {"Content-Type": "text/plain"},
         body: message,
-      ).timeout(
+      )
+          .timeout(
         const Duration(seconds: 30), // Add timeout to prevent infinite waiting
         onTimeout: () {
           throw Exception('Request timed out');
         },
       );
+
       if (response.statusCode == 200) {
-        debugPrint('Success: ${response.body}');
+        return response.body;
       } else {
-        debugPrint('Failed: ${response.statusCode}');
+        return 'Error: ${response.statusCode}';
       }
     } catch (e) {
       debugPrint('Error: $e');
     }
+
+    return "This Function Didn't Work";
   }
 
   /// Called when the send button is pressed or Enter is hit.
@@ -90,9 +95,6 @@ class _ChatScreenState extends State<ChatScreen> {
       return;
     }
 
-    // Wait until the HTTP request completes (i.e. wait for the reply).
-    await sendString(inputText);
-
     setState(() {
       // Add the user message.
       messages.add({
@@ -100,34 +102,49 @@ class _ChatScreenState extends State<ChatScreen> {
         "text": inputText,
         "sender": "user",
       });
+    });
 
-      // Add cards based on the input.
-      if (inputText.startsWith("bus")) {
-        addBusCardsToMessages();
-      } else if (inputText.startsWith("airplane")) {
-        addAirplaneCardsToMessages();
-      } else if (inputText.startsWith("amazon")) {
-        addAmazonCardsToMessages();
-      } else if (inputText.startsWith("airbnb")) {
-        addAirbnbCardsToMessages();
-      } else if (inputText.startsWith("booking")) {
-        addBookingCardsToMessages();
-      } else if (inputText.startsWith("restaurant")) {
-        addRestaurantCardsToMessages();
-      } else if (inputText.startsWith("fashion")) {
-        addFashionShoppingCardsToMessages();
-      } else if (inputText.startsWith("mtime")) {
-        addMovieTimeingCardToMessages();
-      } else if (inputText.startsWith("movieslist")) {
-        addMoviesListCardsToMessages();
-      } else {
+    // Wait until the HTTP request completes (i.e. wait for the reply).
+    String response = await sendString(inputText);
+
+    if (response.startsWith("Error: ")) {
+      setState(() {
         messages.add({
           "type": "text",
-          "text": "This is a placeholder response.",
-          "sender": "bot",
+          "text": response,
+          "sender": "system",
         });
-      }
-    });
+      });
+    } else {
+      setState(() {
+        // Add cards based on the input.
+        if (inputText.startsWith("bus")) {
+          addBusCardsToMessages();
+        } else if (inputText.startsWith("airplane")) {
+          addAirplaneCardsToMessages();
+        } else if (inputText.startsWith("amazon")) {
+          addAmazonCardsToMessages();
+        } else if (inputText.startsWith("airbnb")) {
+          addAirbnbCardsToMessages();
+        } else if (inputText.startsWith("booking")) {
+          addBookingCardsToMessages();
+        } else if (inputText.startsWith("restaurant")) {
+          addRestaurantCardsToMessages();
+        } else if (inputText.startsWith("fashion")) {
+          addFashionShoppingCardsToMessages();
+        } else if (inputText.startsWith("mtime")) {
+          addMovieTimeingCardToMessages();
+        } else if (inputText.startsWith("movieslist")) {
+          addMoviesListCardsToMessages();
+        } else {
+          messages.add({
+            "type": "text",
+            "text": "This is a placeholder response.",
+            "sender": "bot",
+          });
+        }
+      });
+    }
 
     _controller.clear();
     _focusNode.requestFocus();
