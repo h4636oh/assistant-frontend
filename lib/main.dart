@@ -59,6 +59,11 @@ class _ChatScreenState extends State<ChatScreen> {
         url,
         headers: {"Content-Type": "text/plain"},
         body: message,
+      ).timeout(
+        const Duration(seconds: 30), // Add timeout to prevent infinite waiting
+        onTimeout: () {
+          throw Exception('Request timed out');
+        },
       );
       if (response.statusCode == 200) {
         debugPrint('Success: ${response.body}');
