@@ -24,10 +24,10 @@ class MoviesTimingCard extends StatelessWidget {
   final List<ShowTiming> shows;
 
   const MoviesTimingCard({
-    Key? key,
+    super.key,
     required this.theater,
     required this.shows,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
