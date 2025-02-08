@@ -44,3 +44,53 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+
+######################################
+# Chat gpt added these as git-ignore #
+######################################
+
+# Flutter/Dart-specific
+.dart_tool/
+.packages
+.pub/
+build/
+
+# IDE and Editor Files
+.vscode/
+.idea/
+
+# Generated Files
+*.iml
+*.lock
+*.log
+*.pyc
+*.pyo
+*.swp
+
+# OS-Specific Files
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# macOS
+.DS_Store
+
+# Flutter Dependencies
+pubspec.lock
+
+# Xcode / iOS Build Files
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Generated.xcconfig
+ios/Runner.xcworkspace/
+ios/.dart_tool/
+
+# Android Build Files
+android/.gradle/
+android/app/debug.keystore
+
+# Firebase and Secrets (if applicable)
+*.keys.json
+firebase_options.dart
+.env
