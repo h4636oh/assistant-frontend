@@ -83,6 +83,17 @@ class BookingCard extends StatelessWidget {
                   height: 220,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return const Center(
+                        child: CircularProgressIndicator());
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Center(
+                      child:
+                          Icon(Icons.image_not_supported, size: 50),
+                    );
+                  },
                 ),
               ),
               const SizedBox(height: 10),

@@ -94,6 +94,17 @@ class AmazonCard extends StatelessWidget {
                       height: 300,
                       width: double.infinity,
                       fit: BoxFit.contain,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const Center(
+                            child: CircularProgressIndicator());
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Center(
+                          child:
+                              Icon(Icons.image_not_supported, size: 50),
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(height: 12),
