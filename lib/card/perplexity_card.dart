@@ -92,7 +92,7 @@ class PerplexityCard extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 14,
                   color: Colors.blueAccent,
-                  decoration: TextDecoration.underline,
+                  // decoration: TextDecoration.underline,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
