@@ -181,24 +181,24 @@ class AmazonCard extends StatelessWidget {
 List<AmazonCard> getAmazonCards() {
   final List<Map<String, dynamic>> amazonDataList = [
     {
-      "image_url": "https://m.media-amazon.com/images/I/81fvJauBWDL._AC_UY218_.jpg",
-      "product_url": "https://www.amazon.in/s?k=laptop#",
-      "title": "Lenovo IdeaPad Slim 3 12th Gen Intel Core i5-12450H 14\" (35.5cm) FHD Thin & Light Laptop...",
+      "image_url":"https://m.media-amazon.com/images/I/71cbbGm02pL._AC_UY218_.jpg",
+      "product_url": "https://www.amazon.in/HP-Laptop-255-G9-Ryzen/dp/B0DJCWBY7G/ref=sr_1_4?dib=eyJ2IjoiMSJ9.Kq6xvSBkUHQcGOUtNjakx1stJc-FOxGMg_wDgGo2ewAsydvzy7IIg4trdjIYYcSe1UQAYDNeBb18c0i3X52N2rKlQfkf9DjI7-9JMqsPnAagE4tRrPcdmAYpp5oGOCXkcsfKAl43BrbJMywTRweI452gK43IixDLgEzXaS4rm4oPD9lNaJWL60ygdaiEtU2v-JoTNtUjf9MowmkC5LDZ60wHpItlj-MuoSqoa47ov4A.h34Z0afduo2vmZ80d_KRRj70tEiNCuETqC6Le8DEf1A&dib_tag=se&keywords=laptop&qid=1738950587&sr=8-4",
+      "title": "HP Laptop 255 G9 AMD Ryzen 3 3250U Dual Core - (8GB/512GB SSD/AMD Radeon Graphics) Thin and Light Business Laptop/15.6\" (39.62cm)/Black/1.47 kg",
       "number_of_buyers": "200+ bought in past month",
-      "rating": "3.9",
+      "rating": "3.8 out of 5 stars",
       "review_count": "454",
-      "price": 50061,
+      "price":24299,
       "amazon_choice": "Best seller",
     },
     {
-      "image_url": "https://m.media-amazon.com/images/I/81wO4cOZIvL._AC_UY218_.jpg",
-      "product_url": "https://www.amazon.in/s?k=tablet#",
-      "title": "Apple iPad (10.2-inch, Wi-Fi, 32GB) - Space Grey",
-      "number_of_buyers": "100+ bought in past month",
-      "rating": "4.5",
+      "image_url": "https://m.media-amazon.com/images/I/71jG+e7roXL._AC_UY218_.jpg",
+      "product_url": "https://www.amazon.in/Apple-MacBook-Chip-13-inch-256GB/dp/B08N5W4NNB/ref=sr_1_14?dib=eyJ2IjoiMSJ9.Kq6xvSBkUHQcGOUtNjakx1stJc-FOxGMg_wDgGo2ewAsydvzy7IIg4trdjIYYcSe1UQAYDNeBb18c0i3X52N2rKlQfkf9DjI7-9JMqsPnAagE4tRrPcdmAYpp5oGOCXkcsfKAl43BrbJMywTRweI452gK43IixDLgEzXaS4rm4oPD9lNaJWL60ygdaiEtU2v-JoTNtUjf9MowmkC5LDZ60wHpItlj-MuoSqoa47ov4A.h34Z0afduo2vmZ80d_KRRj70tEiNCuETqC6Le8DEf1A&dib_tag=se&keywords=laptop&qid=1738950587&sr=8-14",
+      "title": "Apple MacBook Air Laptop: Apple M1 chip, 13.3-inch/33.74 cm Retina Display, 8GB RAM, 256GB SSD Storage, Backlit Keyboard, FaceTime HD Camera, Touch ID. Works with iPhone/iPad; Space Grey",
+      "number_of_buyers":  "200+ bought in past month",
+      "rating": "4.6 out of 5 stars",
       "review_count": "150",
-      "price": 22999,
-      "amazon_choice": "",
+      "price": 67990,
+      "amazon_choice": "Best seller",
     }
   ];
 
