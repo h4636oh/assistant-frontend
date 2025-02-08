@@ -37,7 +37,8 @@ class FashionShopping extends StatelessWidget {
           builder: (BuildContext dialogContext) {
             return AlertDialog(
               title: const Text("Confirmation"),
-              content: const Text("Do you want to proceed to the product page?"),
+              content:
+                  const Text("Do you want to proceed to the product page?"),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -76,7 +77,9 @@ class FashionShopping extends StatelessWidget {
                     child: FutureBuilder<Size>(
                       future: _getImageSize(imageUrl),
                       builder: (context, snapshot) {
-                        double aspectRatio = snapshot.hasData ? snapshot.data!.width / snapshot.data!.height : 3 / 4;
+                        double aspectRatio = snapshot.hasData
+                            ? snapshot.data!.width / snapshot.data!.height
+                            : 3 / 4;
                         return AspectRatio(
                           aspectRatio: aspectRatio,
                           child: Image.network(
@@ -85,7 +88,8 @@ class FashionShopping extends StatelessWidget {
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               return const Center(
-                                child: Icon(Icons.image_not_supported, size: 50),
+                                child:
+                                    Icon(Icons.image_not_supported, size: 50),
                               );
                             },
                           ),
@@ -125,7 +129,8 @@ class FashionShopping extends StatelessWidget {
                 top: 10,
                 left: 10,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
                     color: const Color.fromARGB(80, 0, 0, 0),
                     borderRadius: BorderRadius.circular(8),
@@ -150,7 +155,7 @@ class FashionShopping extends StatelessWidget {
   Future<Size> _getImageSize(String url) async {
     final Completer<Size> completer = Completer<Size>();
     final Image image = Image.network(url);
-    
+
     image.image.resolve(const ImageConfiguration()).addListener(
       ImageStreamListener((ImageInfo info, bool _) {
         final Size imageSize = Size(
@@ -160,7 +165,7 @@ class FashionShopping extends StatelessWidget {
         completer.complete(imageSize);
       }),
     );
-    
+
     return completer.future;
   }
 }
@@ -168,12 +173,47 @@ class FashionShopping extends StatelessWidget {
 List<FashionShopping> getFashionCards() {
   final List<Map<String, dynamic>> productDataList = [
     {
-      "imageUrl": "https://images.bewakoof.com/t1080/men-s-blue-white-color-block-oversized-polo-zipper-t-shirt-637203-1715258319-1.jpg",
-      "productUrl": "https://www.bewakoof.com/p/mens-blue-white-color-block-oversized-polo-zipper-t-shirt",
-      "title": "Men's Blue & White Color Block Oversized Polo Zipper T-shirt",
-      "brand": "bewakoof",
-      "price": 1170.00,
-    }
+      'id': 'bewakoof25011903402000980',
+      'name': "Men's Blue Angry Zip Graphic Printed T-shirt",
+      'brandimg': 'static/images/banner.jpg',
+      'price': 399,
+      'color': 'default',
+      'discount': 50,
+      'brandlink':
+          'https://www.bewakoof.com/p/men-angry-zip-printed-t-shirt-men',
+      'fabric': 'default',
+      'category': 'default',
+      'image':
+          'https://images.bewakoof.com/t1080/men-angry-zip-printed-t-shirt-577430-1679027317-1.jpg'
+    },
+    {
+      'id': 'bewakoof25011903403001543',
+      'name': "Men's Blue & White Color Block Oversized Polo Zipper T-shirt",
+      'brandimg': 'static/images/banner.jpg',
+      'price': 1170,
+      'color': 'default',
+      'discount': 50,
+      'brandlink':
+          'https://www.bewakoof.com/p/mens-blue-white-color-block-oversized-polo-zipper-t-shirt',
+      'fabric': 'default',
+      'category': 'default',
+      'image':
+          'https://images.bewakoof.com/t1080/men-s-blue-white-color-block-oversized-polo-zipper-t-shirt-637203-1715258319-1.jpg'
+    },
+    {
+      'id': 'wrogn25011903393001500',
+      'name': 'Urban Pink AOP Oversized T-Shirt',
+      'brandimg': 'static/images/banner.jpg',
+      'price': 599,
+      'color': 'default',
+      'discount': 50,
+      'brandlink':
+          'https://wrogn.com/products/urban-pink-aop-oversized-t-shirt?_pos=127&_fid=c3fb51a6d&_ss=c',
+      'fabric': 'default',
+      'category': 'default',
+      'image':
+          'https://wrogn.com/cdn/shop/files/1_35fb28db-cf18-48a0-a994-f614b9fb3aaa.jpg'
+    },
   ];
 
   return productDataList.map((data) {
