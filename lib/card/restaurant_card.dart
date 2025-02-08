@@ -117,7 +117,7 @@ class RestaurantCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: Text(
-                  '$rating ($number reviews)',
+                  '$rating ($number)',
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.white,

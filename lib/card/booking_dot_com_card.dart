@@ -149,7 +149,7 @@ class BookingCard extends StatelessWidget {
                         const Icon(Icons.star, color: Colors.orange, size: 18),
                         const SizedBox(width: 4),
                         Text(
-                          '$rating ($review_count reviews)',
+                          '$rating ($review_count)',
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
