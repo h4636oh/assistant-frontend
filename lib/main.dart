@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:http/http.dart' as http;
 import 'card/bus_card.dart';
 import 'card/airplane_card.dart';
 import 'card/airbnb_card.dart';
@@ -49,17 +50,43 @@ class _ChatScreenState extends State<ChatScreen> {
   // Every message now includes a "sender" property.
   List<Map<String, dynamic>> messages = [];
 
+    Future<void> sendString(String message) async {
+    final url = Uri.parse('https://mighty-sailfish-touched.ngrok-free.app'); // Replace with your URL
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "text/plain"}, // Specify content type
+        body: message,
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint('Success: ${response.body}');
+      } else {
+        debugPrint('Failed: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error: $e');
+    }
+  }
+
   /// Called when the send button is pressed or Enter is hit.
   void _sendMessage() {
     if (_controller.text.isEmpty) return;
 
+    
     setState(() {
+    
+      sendString(_controller.text);
+      
       // Add the user message.
       messages.add({
         "type": "text",
         "text": _controller.text,
         "sender": "user",
       });
+
+      //
 
       // Add cards based on the input.
       if (_controller.text.startsWith("bus")) {
