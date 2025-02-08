@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -72,13 +73,23 @@ class FashionShopping extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16.0),
-                    child: Image.network(
-                      imageUrl,
-                      width: double.infinity,
-                      height: 300, // Reduced image height
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Center(child: Icon(Icons.image_not_supported, size: 50));
+                    child: FutureBuilder<Size>(
+                      future: _getImageSize(imageUrl),
+                      builder: (context, snapshot) {
+                        double aspectRatio = snapshot.hasData ? snapshot.data!.width / snapshot.data!.height : 3 / 4;
+                        return AspectRatio(
+                          aspectRatio: aspectRatio,
+                          child: Image.network(
+                            imageUrl,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Center(
+                                child: Icon(Icons.image_not_supported, size: 50),
+                              );
+                            },
+                          ),
+                        );
                       },
                     ),
                   ),
@@ -134,6 +145,23 @@ class FashionShopping extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<Size> _getImageSize(String url) async {
+    final Completer<Size> completer = Completer<Size>();
+    final Image image = Image.network(url);
+    
+    image.image.resolve(const ImageConfiguration()).addListener(
+      ImageStreamListener((ImageInfo info, bool _) {
+        final Size imageSize = Size(
+          info.image.width.toDouble(),
+          info.image.height.toDouble(),
+        );
+        completer.complete(imageSize);
+      }),
+    );
+    
+    return completer.future;
   }
 }
 
