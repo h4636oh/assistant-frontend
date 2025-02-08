@@ -116,7 +116,7 @@ class AirbnbCard extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
-                              color: Colors.black87,
+                              color: Colors.white,
                             ),
                           ),
                         ],

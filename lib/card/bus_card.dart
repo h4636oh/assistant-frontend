@@ -1,4 +1,4 @@
-// lib/bus_card.dart
+// lib/card/bus_card.dart
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_animate/flutter_animate.dart';

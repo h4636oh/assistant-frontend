@@ -39,11 +39,13 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+  final ScrollController _scrollController = ScrollController();
   List<Map<String, dynamic>> messages = [];
 
   /// Called when the send button is pressed or Enter is hit.
   void _sendMessage() {
     if (_controller.text.isEmpty) return;
+
     setState(() {
       // Add the user message.
       messages.add({
@@ -52,18 +54,13 @@ class _ChatScreenState extends State<ChatScreen> {
         "sender": "user",
       });
 
-      // Add bus or airplane cards based on the input.
+      // Add cards based on the input.
       if (_controller.text.startsWith("bus")) {
         addBusCardsToMessages();
       } else if (_controller.text.startsWith("airplane")) {
         addAirplaneCardsToMessages();
       } else if (_controller.text.startsWith("amazon")) {
-        // addAmazonCardsToMessages();
-        messages.add({
-          "type": "text",
-          "text": "This is a amazon response.",
-          "sender": "bot",
-        });
+        addAmazonCardsToMessages();
       } else if (_controller.text.startsWith("airbnb")) {
         addAirbnbCardsToMessages();
       } else {
@@ -76,6 +73,17 @@ class _ChatScreenState extends State<ChatScreen> {
     });
     _controller.clear();
     _focusNode.requestFocus();
+
+    // Scroll to bottom after the frame updates.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   /// Adds bus card messages.
@@ -100,16 +108,18 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  // void addAmazonCardsToMessages() {
-  //   List<AmazonCard> amazonCards = getAmazonCards();
-  //   for (var airplaneCard in amazonCards) {
-  //     messages.add({
-  //       "type": "airplane",
-  //       "data": airplaneCard,
-  //     });
-  //   }
-  // }
+  /// Adds amazon card messages.
+  void addAmazonCardsToMessages() {
+    List<AmazonCard> amazonCards = getAmazonCards();
+    for (var amazonCard in amazonCards) {
+      messages.add({
+        "type": "amazon",
+        "data": amazonCard,
+      });
+    }
+  }
 
+  /// Adds airbnb card messages.
   void addAirbnbCardsToMessages() {
     List<AirbnbCard> airbnbCards = getAirbnbCards();
     for (var airbnbCard in airbnbCards) {
@@ -118,6 +128,14 @@ class _ChatScreenState extends State<ChatScreen> {
         "data": airbnbCard,
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -136,6 +154,7 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Expanded(
             child: ListView.builder(
+              controller: _scrollController, // Attach the scroll controller.
               padding: const EdgeInsets.all(10),
               itemCount: messages.length,
               itemBuilder: (context, index) {
@@ -172,12 +191,12 @@ class _ChatScreenState extends State<ChatScreen> {
                     alignment: Alignment.centerLeft,
                     child: airplaneCard,
                   );
-                // } else if (msg["type"] == "amazon") {
-                //   final amazonCard = msg["data"] as AmazonCard;
-                //   return Align(
-                //     alignment: Alignment.centerLeft,
-                //     child: amazonCard,
-                //   );
+                } else if (msg["type"] == "amazon") {
+                  final amazonCard = msg["data"] as AmazonCard;
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: amazonCard,
+                  );
                 } else if (msg["type"] == "airbnb") {
                   final airbnbCard = msg["data"] as AirbnbCard;
                   return Align(
