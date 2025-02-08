@@ -243,29 +243,23 @@ class _ChatScreenState extends State<ChatScreen> {
       Widget iconWidget;
       if (showIcon) {
         if (isUser) {
-          // For user messages: icon on the top right with blue background.
+          // For user messages: icon on the top right in blue.
           iconWidget = Padding(
             padding: const EdgeInsets.only(top: 10),
-            child: Container(
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.blueAccent,
-              ),
-              padding: const EdgeInsets.all(4),
-              child: const Icon(Icons.account_circle, color: Colors.white),
+            child: Icon(
+              Icons.account_circle,
+              size: 32.0, // Increased size (approx. 1.3 times default)
+              color: Colors.blueAccent,
             ),
           );
         } else {
-          // For bot messages: icon on the top left with a greyish background.
+          // For bot messages: icon on the top left in grey.
           iconWidget = Padding(
             padding: const EdgeInsets.only(top: 10),
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.grey.shade700,
-              ),
-              padding: const EdgeInsets.all(4),
-              child: const Icon(Icons.smart_toy, color: Colors.white),
+            child: Icon(
+              Icons.smart_toy,
+              size: 32.0, // Increased size
+              color: Colors.grey.shade700,
             ),
           );
         }
