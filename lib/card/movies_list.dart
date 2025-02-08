@@ -5,17 +5,17 @@ import 'package:flutter_animate/flutter_animate.dart';
 class MovieList extends StatelessWidget {
   final String title;
   final String poster;
-  final String link;
   final String ageRating;
   final String movieUrl;
+  final String language;
 
   const MovieList({
     super.key,
     required this.title,
     required this.poster,
-    required this.link,
     required this.ageRating,
     required this.movieUrl,
+    required this.language,
   });
 
   Future<void> _launchURL() async {
@@ -100,7 +100,7 @@ class MovieList extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        '₹$ageRating',
+                        ageRating,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -139,7 +139,7 @@ class MovieList extends StatelessWidget {
   }
 }
 
-List<MovieList> getMovieListCards() {
+List<MovieList> getMoviesListCards() {
   final List<Map<String, dynamic>> movieListDataList = [
     {
       "title": "Deva",
@@ -160,8 +160,7 @@ List<MovieList> getMovieListCards() {
     },
     {
       "title": "Loveyapa",
-      "poster":
-          "https://assetscdn1.paytm.com/images/cinema/loveyappa-a65cca50-e2bd-11ef-8f0a-13039e72f1f5.jpg?format=webp&imwidth=576",
+      "poster": "https://assetscdn1.paytm.com/images/cinema/loveyappa-a65cca50-e2bd-11ef-8f0a-13039e72f1f5.jpg?format=webp&imwidth=576",
       "link": "https://paytm.com/movies/loveyapa-movie-detail-185770",
       "age_rating": "UA16+",
       "language": "Hindi"

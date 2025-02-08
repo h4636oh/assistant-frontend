@@ -177,7 +177,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   /// Adds movies list card messages.
   void addMoviesListCardsToMessages() {
-    List<MoviesList> moviesCards = getMoviesListCards();
+    List<MovieList> moviesCards = getMoviesListCards();
+      debugPrint("Movies retrieved: ${moviesCards.length}");
     for (var moviesCard in moviesCards) {
       messages.add({
         "type": "movieslist",
@@ -273,6 +274,12 @@ class _ChatScreenState extends State<ChatScreen> {
                   );
                 } else if (msg["type"] == "fashion") {
                   final fashionCard = msg["data"] as FashionShopping;
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: fashionCard,
+                  );
+                } else if (msg["type"] == "movieslist") {
+                  final fashionCard = msg["data"] as MovieList;
                   return Align(
                     alignment: Alignment.centerLeft,
                     child: fashionCard,
