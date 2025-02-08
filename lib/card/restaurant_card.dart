@@ -34,7 +34,6 @@ class RestaurantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Display only the first 5 tags if there are more than 5, otherwise display all
     final List<String> displayedTags =
         tags.length > 3 ? tags.sublist(0, 3) : tags;
 
