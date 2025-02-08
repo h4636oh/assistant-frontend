@@ -10,7 +10,7 @@ import 'card/amazon_card.dart';
 import 'card/booking_dot_com_card.dart';
 import 'card/restaurant_card.dart';
 import 'card/fashion_shopping.dart';
-import 'card/movies_list.dart';
+import 'card/movies_timing.dart';
 
 void main() {
   runApp(const ChatApp());
@@ -73,8 +73,8 @@ class _ChatScreenState extends State<ChatScreen> {
         addRestaurantCardsToMessages();
       } else if (_controller.text.startsWith("fashion")) {
         addFashionShoppingCardsToMessages();
-      } else if (_controller.text.startsWith("movieslist")) {
-        addMoviesListCardsToMessages();
+      } else if (_controller.text.startsWith("mtime")) {
+        addMovieTimeingCardToMessages();
       } else {
         messages.add({
           "type": "text",
@@ -96,6 +96,17 @@ class _ChatScreenState extends State<ChatScreen> {
         );
       }
     });
+  }
+
+  /// Adds Movie Timings card messages
+  void addMovieTimeingCardToMessages() {
+    List<MoviesTimingCard> moviesTimingCards = getMoviesTimingCards();
+    for (var moviesTimingCard in moviesTimingCards) {
+      messages.add({
+        "type": "mtime",
+        "data": moviesTimingCard,
+      });
+    }
   }
 
   /// Adds bus card messages.
@@ -171,17 +182,6 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "fashion",
         "data": fashionCard,
-      });
-    }
-  }
-
-  /// Adds movies list card messages.
-  void addMoviesListCardsToMessages() {
-    List<MoviesList> moviesCards = getMoviesListCards();
-    for (var moviesCard in moviesCards) {
-      messages.add({
-        "type": "movieslist",
-        "data": moviesCard,
       });
     }
   }
@@ -276,6 +276,12 @@ class _ChatScreenState extends State<ChatScreen> {
                   return Align(
                     alignment: Alignment.centerLeft,
                     child: fashionCard,
+                  );
+                } else if (msg["type"] == "mtime") {
+                  final moviesTimingsCard = msg["data"] as MoviesTimingCard;
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: moviesTimingsCard,
                   );
                 }
                 return const SizedBox.shrink();
