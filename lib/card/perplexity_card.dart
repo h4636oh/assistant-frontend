@@ -106,7 +106,7 @@ class PerplexityCard extends StatelessWidget {
 
 List<PerplexityCard> getPerplexityCards() {
   final Map<String, dynamic> newsData = {
-    'response_content': "The Delhi Assembly Elections 2025 have resulted in a significant political shift, with the BJP set to form the government in Delhi after 27 years. The BJP is leading in over 47 out of 70 assembly seats, while AAP is ahead in only 20+ seats.",
+    'response_content': "The Delhi Assembly Elections 2025 have resulted in a significant political shift, with the BJP set to form the government in Delhi after 27 years. The BJP is leading in over 47 out of 70 assembly seats, while AAP is ahead in only 20+ seat.",
     'response_url': [
       'https://www.youtube.com/watch?v=jj2MjbYzPec',
       'https://indianexpress.com/article/india/election-commission-of-india-eci-delhi-election-results-2025/',
