@@ -15,6 +15,7 @@ import 'card/fashion_shopping.dart';
 import 'card/movies_list.dart';
 import 'card/movies_timing.dart';
 import 'card/perplexity_card.dart';
+import 'card/uber_card.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -190,6 +191,8 @@ class _ChatScreenState extends State<ChatScreen> {
           addMoviesListCardsToMessages();
         } else if (inputText.startsWith("perplexity")) {
           addPerplexityCardsToMessages();
+        } else if (inputText.startsWith("uber")) {
+          addUberCardsToMessages();
         } else {
           messages.add({
             "type": "text",
@@ -214,6 +217,18 @@ class _ChatScreenState extends State<ChatScreen> {
         );
       }
     });
+  }
+
+  /// Adds Uber card messages.
+  void addUberCardsToMessages() {
+    List<UberCard> uberCards = getUberCards();
+    for (var uberCard in uberCards) {
+      messages.add({
+        "type": "uber",
+        "data": uberCard,
+        "sender": "bot",
+      });
+    }
   }
 
   /// Adds Movie Timings card messages.
@@ -531,6 +546,9 @@ class _ChatScreenState extends State<ChatScreen> {
                   final perplexity = msg["data"] as PerplexityCard;
                   debugPrint(perplexity.toString());
                   return buildMessageWithIcon(perplexity, index, isUser);
+                } else if (msg["type"] == "uber") {
+                  final uberCard = msg["data"] as UberCard;
+                  return buildMessageWithIcon(uberCard, index, isUser);
                 }
                 return const SizedBox.shrink();
               },
