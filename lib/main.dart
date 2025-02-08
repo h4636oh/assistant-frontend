@@ -10,6 +10,7 @@ import 'card/amazon_card.dart';
 import 'card/booking_dot_com_card.dart';
 import 'card/restaurant_card.dart';
 import 'card/fashion_shopping.dart';
+import 'card/movies_list.dart';
 import 'card/movies_timing.dart';
 
 void main() {
@@ -75,6 +76,8 @@ class _ChatScreenState extends State<ChatScreen> {
         addFashionShoppingCardsToMessages();
       } else if (_controller.text.startsWith("mtime")) {
         addMovieTimeingCardToMessages();
+      } else if (_controller.text.startsWith("movieslist")) {
+        addMoviesListCardsToMessages();
       } else {
         messages.add({
           "type": "text",
@@ -289,10 +292,16 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: fashionCard,
                   );
                 } else if (msg["type"] == "movieslist") {
-                  final fashionCard = msg["data"] as MovieList;
+                  final movieslist = msg["data"] as MovieList;
                   return Align(
                     alignment: Alignment.centerLeft,
-                    child: fashionCard,
+                    child: movieslist,
+                  );
+                } else if (msg["type"] == "mtime") {
+                  final movietimes = msg["data"] as MoviesTimingCard;
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: movietimes,
                   );
                 }
                 return const SizedBox.shrink();
