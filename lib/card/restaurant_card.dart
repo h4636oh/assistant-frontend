@@ -134,7 +134,7 @@ class RestaurantCard extends StatelessWidget {
               const SizedBox(height: 12),
             ],
           ),
-        ).animate().fade(duration: 400.ms).slideY(),
+        ).animate().fade(duration: 300.ms).slideX(),
       ),
     );
   }
@@ -144,16 +144,20 @@ class RestaurantCard extends StatelessWidget {
 List<RestaurantCard> getRestaurantCards() {
   final List<Map<String, dynamic>> restaurantDataList = [
     {
-      "image_url": "https://lh5.googleusercontent.com/p/AF1QipPTsBoXaGeJyPnX3xZpS-Mla6OPdQ_YPK7uADtz=w408-h408-k-no",
-      "restaurant_url": "https://www.google.com/maps/place/Thalassa/data=!4m7!3m6!1s0x3bbfe970ad8bd35f:0x60425614f6bda5bc!8m2!3d15.6163537!4d73.7555322!16s%2Fg%2F1tdfx4t6!19sChIJX9OLrXDpvzsRvKW99hRWQmA?authuser=0&hl=en&rclk=1",
+      "image_url":
+          "https://lh5.googleusercontent.com/p/AF1QipPTsBoXaGeJyPnX3xZpS-Mla6OPdQ_YPK7uADtz=w408-h408-k-no",
+      "restaurant_url":
+          "https://www.google.com/maps/place/Thalassa/data=!4m7!3m6!1s0x3bbfe970ad8bd35f:0x60425614f6bda5bc!8m2!3d15.6163537!4d73.7555322!16s%2Fg%2F1tdfx4t6!19sChIJX9OLrXDpvzsRvKW99hRWQmA?authuser=0&hl=en&rclk=1",
       "name": "The Gourmet Kitchen",
       "rating": "4.5",
       "number": 120,
       "tags": ["Italian", "Pasta", "Desserts", "Wine"]
     },
     {
-      "image_url":"https://lh5.googleusercontent.com/p/AF1QipNpbLGBWX0FCiUln8MKdlW8oGgl3sqqL1qZa28p=w426-h240-k-no",
-      "restaurant_url": "https://www.google.com/maps/place/Martin's+Corner/@15.3037876,73.9143001,17z/data=!3m1!4b1!4m6!3m5!1s0x3bbfb6dda67ab363:0x7be42cfd4e9de95!8m2!3d15.3037876!4d73.9143001!16s%2Fg%2F11b5wkpk7y?authuser=0&hl=en&entry=ttu&g_ep=EgoyMDI1MDIwMi4wIKXMDSoASAFQAw%3D%3D",
+      "image_url":
+          "https://lh5.googleusercontent.com/p/AF1QipNpbLGBWX0FCiUln8MKdlW8oGgl3sqqL1qZa28p=w426-h240-k-no",
+      "restaurant_url":
+          "https://www.google.com/maps/place/Martin's+Corner/@15.3037876,73.9143001,17z/data=!3m1!4b1!4m6!3m5!1s0x3bbfb6dda67ab363:0x7be42cfd4e9de95!8m2!3d15.3037876!4d73.9143001!16s%2Fg%2F11b5wkpk7y?authuser=0&hl=en&entry=ttu&g_ep=EgoyMDI1MDIwMi4wIKXMDSoASAFQAw%3D%3D",
       "name": "Sushi World",
       "rating": "4.8",
       "number": 200,

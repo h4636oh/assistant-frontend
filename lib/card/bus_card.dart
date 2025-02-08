@@ -184,7 +184,7 @@ class BusCard extends StatelessWidget {
             ),
           ),
         ),
-      ).animate().fade(duration: 500.ms).slideY(), // Adding animation
+      ).animate().fade(duration: 300.ms).slideX(), // Adding animation
     );
   }
 }

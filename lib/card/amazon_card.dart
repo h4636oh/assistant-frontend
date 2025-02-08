@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class AmazonCard extends StatelessWidget {
   final String imageUrl;
@@ -125,7 +126,8 @@ class AmazonCard extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.star, color: Colors.orange, size: 18),
+                            const Icon(Icons.star,
+                                color: Colors.orange, size: 18),
                             const SizedBox(width: 4),
                             Text(
                               '$rating ($reviewCount reviews)',
@@ -155,7 +157,8 @@ class AmazonCard extends StatelessWidget {
                   top: 10,
                   left: 10,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                       color: const Color.fromARGB(80, 0, 0, 0),
                       borderRadius: BorderRadius.circular(8),
@@ -173,7 +176,7 @@ class AmazonCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
+      ).animate().fade(duration: 300.ms).slideX(),
     );
   }
 }
@@ -181,20 +184,26 @@ class AmazonCard extends StatelessWidget {
 List<AmazonCard> getAmazonCards() {
   final List<Map<String, dynamic>> amazonDataList = [
     {
-      "image_url":"https://m.media-amazon.com/images/I/71cbbGm02pL._AC_UY218_.jpg",
-      "product_url": "https://www.amazon.in/HP-Laptop-255-G9-Ryzen/dp/B0DJCWBY7G/ref=sr_1_4?dib=eyJ2IjoiMSJ9.Kq6xvSBkUHQcGOUtNjakx1stJc-FOxGMg_wDgGo2ewAsydvzy7IIg4trdjIYYcSe1UQAYDNeBb18c0i3X52N2rKlQfkf9DjI7-9JMqsPnAagE4tRrPcdmAYpp5oGOCXkcsfKAl43BrbJMywTRweI452gK43IixDLgEzXaS4rm4oPD9lNaJWL60ygdaiEtU2v-JoTNtUjf9MowmkC5LDZ60wHpItlj-MuoSqoa47ov4A.h34Z0afduo2vmZ80d_KRRj70tEiNCuETqC6Le8DEf1A&dib_tag=se&keywords=laptop&qid=1738950587&sr=8-4",
-      "title": "HP Laptop 255 G9 AMD Ryzen 3 3250U Dual Core - (8GB/512GB SSD/AMD Radeon Graphics) Thin and Light Business Laptop/15.6\" (39.62cm)/Black/1.47 kg",
+      "image_url":
+          "https://m.media-amazon.com/images/I/71cbbGm02pL._AC_UY218_.jpg",
+      "product_url":
+          "https://www.amazon.in/HP-Laptop-255-G9-Ryzen/dp/B0DJCWBY7G/ref=sr_1_4?dib=eyJ2IjoiMSJ9.Kq6xvSBkUHQcGOUtNjakx1stJc-FOxGMg_wDgGo2ewAsydvzy7IIg4trdjIYYcSe1UQAYDNeBb18c0i3X52N2rKlQfkf9DjI7-9JMqsPnAagE4tRrPcdmAYpp5oGOCXkcsfKAl43BrbJMywTRweI452gK43IixDLgEzXaS4rm4oPD9lNaJWL60ygdaiEtU2v-JoTNtUjf9MowmkC5LDZ60wHpItlj-MuoSqoa47ov4A.h34Z0afduo2vmZ80d_KRRj70tEiNCuETqC6Le8DEf1A&dib_tag=se&keywords=laptop&qid=1738950587&sr=8-4",
+      "title":
+          "HP Laptop 255 G9 AMD Ryzen 3 3250U Dual Core - (8GB/512GB SSD/AMD Radeon Graphics) Thin and Light Business Laptop/15.6\" (39.62cm)/Black/1.47 kg",
       "number_of_buyers": "200+ bought in past month",
       "rating": "3.8",
       "review_count": "454",
-      "price":24299,
+      "price": 24299,
       "amazon_choice": "Best seller",
     },
     {
-      "image_url": "https://m.media-amazon.com/images/I/71jG+e7roXL._AC_UY218_.jpg",
-      "product_url": "https://www.amazon.in/Apple-MacBook-Chip-13-inch-256GB/dp/B08N5W4NNB/ref=sr_1_14?dib=eyJ2IjoiMSJ9.Kq6xvSBkUHQcGOUtNjakx1stJc-FOxGMg_wDgGo2ewAsydvzy7IIg4trdjIYYcSe1UQAYDNeBb18c0i3X52N2rKlQfkf9DjI7-9JMqsPnAagE4tRrPcdmAYpp5oGOCXkcsfKAl43BrbJMywTRweI452gK43IixDLgEzXaS4rm4oPD9lNaJWL60ygdaiEtU2v-JoTNtUjf9MowmkC5LDZ60wHpItlj-MuoSqoa47ov4A.h34Z0afduo2vmZ80d_KRRj70tEiNCuETqC6Le8DEf1A&dib_tag=se&keywords=laptop&qid=1738950587&sr=8-14",
-      "title": "Apple MacBook Air Laptop: Apple M1 chip, 13.3-inch/33.74 cm Retina Display, 8GB RAM, 256GB SSD Storage, Backlit Keyboard, FaceTime HD Camera, Touch ID. Works with iPhone/iPad; Space Grey",
-      "number_of_buyers":  "200+ bought in past month",
+      "image_url":
+          "https://m.media-amazon.com/images/I/71jG+e7roXL._AC_UY218_.jpg",
+      "product_url":
+          "https://www.amazon.in/Apple-MacBook-Chip-13-inch-256GB/dp/B08N5W4NNB/ref=sr_1_14?dib=eyJ2IjoiMSJ9.Kq6xvSBkUHQcGOUtNjakx1stJc-FOxGMg_wDgGo2ewAsydvzy7IIg4trdjIYYcSe1UQAYDNeBb18c0i3X52N2rKlQfkf9DjI7-9JMqsPnAagE4tRrPcdmAYpp5oGOCXkcsfKAl43BrbJMywTRweI452gK43IixDLgEzXaS4rm4oPD9lNaJWL60ygdaiEtU2v-JoTNtUjf9MowmkC5LDZ60wHpItlj-MuoSqoa47ov4A.h34Z0afduo2vmZ80d_KRRj70tEiNCuETqC6Le8DEf1A&dib_tag=se&keywords=laptop&qid=1738950587&sr=8-14",
+      "title":
+          "Apple MacBook Air Laptop: Apple M1 chip, 13.3-inch/33.74 cm Retina Display, 8GB RAM, 256GB SSD Storage, Backlit Keyboard, FaceTime HD Camera, Touch ID. Works with iPhone/iPad; Space Grey",
+      "number_of_buyers": "200+ bought in past month",
       "rating": "4.6",
       "review_count": "150",
       "price": 67990,

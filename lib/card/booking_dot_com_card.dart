@@ -44,7 +44,8 @@ class BookingCard extends StatelessWidget {
           builder: (BuildContext dialogContext) {
             return AlertDialog(
               title: const Text("Confirmation"),
-              content: const Text("Do you want to proceed to the Booking.com listing?"),
+              content: const Text(
+                  "Do you want to proceed to the Booking.com listing?"),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -117,7 +118,9 @@ class BookingCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      Breakfast_included ? "Breakfast Included" : "No Breakfast",
+                      Breakfast_included
+                          ? "Breakfast Included"
+                          : "No Breakfast",
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -161,7 +164,7 @@ class BookingCard extends StatelessWidget {
               const SizedBox(height: 12),
             ],
           ),
-        ).animate().fade(duration: 400.ms).slideY(),
+        ).animate().fade(duration: 300.ms).slideX(),
       ),
     );
   }
@@ -170,7 +173,8 @@ class BookingCard extends StatelessWidget {
 List<BookingCard> getBookingCards() {
   final List<Map<String, dynamic>> scrapedDataList = [
     {
-      "image_url": "https://cf.bstatic.com/xdata/images/hotel/square600/467538050.webp?k=4dc63210102a80dd6904d8585500732c30b2e16c643a461699fcca1649ee92ee&o=",
+      "image_url":
+          "https://cf.bstatic.com/xdata/images/hotel/square600/467538050.webp?k=4dc63210102a80dd6904d8585500732c30b2e16c643a461699fcca1649ee92ee&o=",
       "hotel_url": "https://www.booking.com/hotel/73498739",
       "title": "Cozy 1BHK Flat in South Delhi",
       "review_comment": "Comfortable and peaceful stay.",

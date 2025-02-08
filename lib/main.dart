@@ -229,7 +229,6 @@ class _ChatScreenState extends State<ChatScreen> {
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 final msg = messages[index];
-
                 if (msg["type"] == "text") {
                   bool isUser = msg["sender"] == "user";
                   return Align(
@@ -247,7 +246,10 @@ class _ChatScreenState extends State<ChatScreen> {
                         style:
                             const TextStyle(color: Colors.white, fontSize: 20),
                       ),
-                    ).animate().fade(duration: 500.ms).slideY(),
+                    ).animate().fade(duration: 300.ms).slideX(
+                        begin: isUser
+                            ? 1
+                            : -1), // User slides from left, bot from right.
                   );
                 } else if (msg["type"] == "bus") {
                   final busCard = msg["data"] as BusCard;

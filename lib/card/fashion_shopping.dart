@@ -146,7 +146,7 @@ class FashionShopping extends StatelessWidget {
                 ),
               ),
             ],
-          ).animate().fade(duration: 500.ms).slideY(),
+          ).animate().fade(duration: 300.ms).slideX(),
         ),
       ),
     );

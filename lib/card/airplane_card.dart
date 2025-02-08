@@ -50,8 +50,8 @@ class AirplaneCard extends StatelessWidget {
           builder: (BuildContext dialogContext) {
             return AlertDialog(
               title: const Text("Confirmation"),
-              content: const Text(
-                  "Do you want to proceed to the airplane website?"),
+              content:
+                  const Text("Do you want to proceed to the airplane website?"),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -81,7 +81,8 @@ class AirplaneCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Container(
-          width: MediaQuery.of(context).size.width * 0.75, // 3/4 of viewport width
+          width:
+              MediaQuery.of(context).size.width * 0.75, // 3/4 of viewport width
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.grey[850],
@@ -155,8 +156,15 @@ class AirplaneCard extends StatelessWidget {
                     style: const TextStyle(color: Colors.white),
                   ),
                   Text(
-                    nonstop.toLowerCase() == "yes" ? "Nonstop" : nonstop.toLowerCase() == "no" ? "Layover" : "N/A",
-                    style: TextStyle(color: nonstop.toLowerCase() == "yes" ? Colors.green : Colors.red),
+                    nonstop.toLowerCase() == "yes"
+                        ? "Nonstop"
+                        : nonstop.toLowerCase() == "no"
+                            ? "Layover"
+                            : "N/A",
+                    style: TextStyle(
+                        color: nonstop.toLowerCase() == "yes"
+                            ? Colors.green
+                            : Colors.red),
                   ),
                 ],
               ),
@@ -180,7 +188,7 @@ class AirplaneCard extends StatelessWidget {
             ],
           ),
         ),
-      ).animate().fade(duration: 500.ms).slideY(), // Adding animation
+      ).animate().fade(duration: 300.ms).slideX(), // Adding animation
     );
   }
 }
