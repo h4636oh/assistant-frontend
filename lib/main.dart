@@ -186,7 +186,7 @@ class _ChatScreenState extends State<ChatScreen> {
         "arrival_date": "10 Feb",
         "duration": "01h 30m",
         "final_price": "1,516",
-        "nonstop": "Non Stop",
+        "nonstop": "No",
         "seats_available": "20",
         "url": "https://www.goindigo.in/flight-status.html"
       },
@@ -655,7 +655,7 @@ class AirplaneCard extends StatelessWidget {
                     style: TextStyle(color: Colors.white),
                   ),
                   Text(
-                    "Nonestop: $nonstop",
+                    nonstop == 'Yes' ? 'Nonstop' : nonstop == 'No' ? 'Layover' : 'N/A',
                     style: TextStyle(color: Colors.white),
                   ),
                 ],
