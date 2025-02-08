@@ -7,6 +7,7 @@ import 'card/bus_card.dart';
 import 'card/airplane_card.dart';
 import 'card/airbnb_card.dart';
 import 'card/amazon_card.dart';
+import 'card/booking_dot_com_card.dart';
 
 void main() {
   runApp(const ChatApp());
@@ -63,6 +64,8 @@ class _ChatScreenState extends State<ChatScreen> {
         addAmazonCardsToMessages();
       } else if (_controller.text.startsWith("airbnb")) {
         addAirbnbCardsToMessages();
+      } else if (_controller.text.startsWith("booking")) {
+        addBookingCardsToMessages();
       } else {
         messages.add({
           "type": "text",
@@ -126,6 +129,17 @@ class _ChatScreenState extends State<ChatScreen> {
       messages.add({
         "type": "airbnb",
         "data": airbnbCard,
+      });
+    }
+  }
+
+  /// Adds booking dot com card messages.
+  void addBookingCardsToMessages() {
+    List<BookingCard> bookingCards = getBookingCards();
+    for (var bookingCard in bookingCards) {
+      messages.add({
+        "type": "booking",
+        "data": bookingCard,
       });
     }
   }
@@ -202,6 +216,12 @@ class _ChatScreenState extends State<ChatScreen> {
                   return Align(
                     alignment: Alignment.centerLeft,
                     child: airbnbCard,
+                  );
+                } else if (msg["type"] == "booking") {
+                  final bookingCard = msg["data"] as BookingCard;
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: bookingCard,
                   );
                 }
                 return const SizedBox.shrink();
