@@ -1,6 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-<<<<<<< HEAD
-=======
 class MovieList extends StatelessWidget {
   final String title;
   final String poster;
@@ -74,7 +75,8 @@ class MovieList extends StatelessWidget {
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         return AspectRatio(
-                          aspectRatio: 2 / 3, // Default ratio (adjust if needed)
+                          aspectRatio:
+                              2 / 3, // Default ratio (adjust if needed)
                           child: Image.network(
                             poster,
                             fit: BoxFit.cover,
@@ -85,7 +87,8 @@ class MovieList extends StatelessWidget {
                             },
                             errorBuilder: (context, error, stackTrace) {
                               return const Center(
-                                child: Icon(Icons.image_not_supported, size: 50),
+                                child:
+                                    Icon(Icons.image_not_supported, size: 50),
                               );
                             },
                           ),
@@ -170,7 +173,8 @@ List<MovieList> getMoviesListCards() {
     },
     {
       "title": "Loveyapa",
-      "poster": "https://assetscdn1.paytm.com/images/cinema/loveyappa-a65cca50-e2bd-11ef-8f0a-13039e72f1f5.jpg?format=webp&imwidth=576",
+      "poster":
+          "https://assetscdn1.paytm.com/images/cinema/loveyappa-a65cca50-e2bd-11ef-8f0a-13039e72f1f5.jpg?format=webp&imwidth=576",
       "link": "https://paytm.com/movies/loveyapa-movie-detail-185770",
       "age_rating": "UA16+",
       "language": "Hindi"
@@ -187,4 +191,3 @@ List<MovieList> getMoviesListCards() {
     );
   }).toList();
 }
->>>>>>> 1b69c76cb521a4cc6f5934f0e2d5bba9a0efce7a
