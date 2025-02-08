@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 
+<<<<<<< HEAD
+=======
 class MovieList extends StatelessWidget {
   final String title;
   final String poster;
@@ -188,3 +187,4 @@ List<MovieList> getMoviesListCards() {
     );
   }).toList();
 }
+>>>>>>> 1b69c76cb521a4cc6f5934f0e2d5bba9a0efce7a
