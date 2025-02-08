@@ -49,10 +49,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
   // Every message now includes a "sender" property.
   List<Map<String, dynamic>> messages = [];
+  bool _isLoading = false; // Tracks if a message is being sent/waiting for a response.
 
   /// Sends the message to the server and waits for the reply.
   Future<String> sendString(String message) async {
-    final url = Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Replace with your URL
+    final url = Uri.parse(
+        'https://stirred-bream-largely.ngrok-free.app'); // Replace with your URL
     try {
       final response = await http
           .post(
@@ -81,7 +83,6 @@ class _ChatScreenState extends State<ChatScreen> {
   /// Called when the send button is pressed or Enter is hit.
   Future<void> _sendMessage() async {
     if (_controller.text.isEmpty) return;
-
     final inputText = _controller.text.trim();
 
     // Process clear command immediately.
@@ -93,8 +94,9 @@ class _ChatScreenState extends State<ChatScreen> {
       return;
     }
 
-    // Add the user message.
+    // Disable the input and send button.
     setState(() {
+      _isLoading = true;
       messages.add({
         "type": "text",
         "text": inputText,
@@ -156,6 +158,8 @@ class _ChatScreenState extends State<ChatScreen> {
           });
         }
       }
+      // Re-enable the input and send button.
+      _isLoading = false;
     });
 
     _controller.clear();
@@ -491,9 +495,11 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Row(
               children: [
                 Expanded(
+                  // Disable the text field while waiting for a response.
                   child: TextField(
                     controller: _controller,
                     focusNode: _focusNode,
+                    enabled: !_isLoading,
                     style: const TextStyle(color: Colors.white),
                     onSubmitted: (value) => _sendMessage(),
                     textInputAction: TextInputAction.send,
@@ -510,9 +516,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
                 const SizedBox(width: 8),
+                // Disable the send button while waiting for a response.
                 FloatingActionButton(
                   backgroundColor: Colors.blueAccent,
-                  onPressed: _sendMessage,
+                  onPressed: _isLoading ? null : _sendMessage,
                   child: Icon(Icons.send, color: Colors.white)
                       .animate()
                       .scale(duration: 200.ms),
