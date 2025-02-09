@@ -180,11 +180,11 @@ List<FashionShopping> getFashionCards(dynamic response) {
 
   return productDataList.map((data) {
     return FashionShopping(
-      imageUrl: data["imageUrl"],
-      productUrl: data["productUrl"],
-      title: data["title"],
-      brand: data["brand"],
-      price: data["price"],
+      imageUrl: data["Image"],
+      productUrl: data["url"],
+      title: data["Title"],
+      brand: data["Brand"],
+      price: data["Price"].substring(data["Price"].length - 3),
     );
   }).toList();
 }
