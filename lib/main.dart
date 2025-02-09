@@ -450,7 +450,7 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: const Text(
           "ATHENA",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "nasa"),
         ),
         centerTitle: true,
         backgroundColor: Colors.blueAccent,
@@ -554,46 +554,57 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Opacity(
-                    opacity: _isLoading ? 0.5 : 1.0,
-                    child: TextField(
-                      controller: _controller,
-                      focusNode: _focusNode,
-                      enabled: !_isLoading,
-                      style: const TextStyle(color: Colors.white),
-                      onSubmitted: (value) => _sendMessage(),
-                      textInputAction: TextInputAction.send,
-                      decoration: InputDecoration(
-                        hintText: "Ask something...",
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        filled: true,
-                        fillColor: _isLoading ? Colors.grey : Colors.grey[900],
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // When processing, show a stop button with a red background; otherwise, show the send button.
-                FloatingActionButton(
-                  backgroundColor: _isLoading ? Colors.red : Colors.blueAccent,
-                  onPressed: _isLoading ? _cancelMessage : _sendMessage,
-                  child: Icon(
-                    _isLoading ? Icons.stop : Icons.send,
-                    color: Colors.white,
-                  ).animate().scale(duration: 200.ms),
-                ),
-              ],
+Padding(
+  padding: const EdgeInsets.all(8.0),
+  child: Row(
+    crossAxisAlignment: CrossAxisAlignment.center, // Align items in the center vertically
+    children: [
+      // TextField wrapped in SizedBox
+      Expanded(
+        child: SizedBox(
+          height: 56, // Match FloatingActionButton's default height (56)
+          child: TextField(
+            controller: _controller,
+            focusNode: _focusNode,
+            enabled: !_isLoading,
+            style: const TextStyle(color: Colors.white),
+            onSubmitted: (value) => _sendMessage(),
+            textInputAction: TextInputAction.send,
+            decoration: InputDecoration(
+              hintText: "Ask something...",
+              hintStyle: const TextStyle(color: Colors.grey),
+              filled: true,
+              fillColor: _isLoading ? Colors.grey : Colors.grey[900],
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 20, // Adjust padding for better alignment
+                horizontal: 12,
+              ),
             ),
           ),
+        ),
+      ),
+      const SizedBox(width: 8), // Space between TextField and button
+      // FloatingActionButton wrapped in a SizedBox
+      SizedBox(
+        height: 56, // Match default FAB height
+        width: 56,  // Match default FAB width
+        child: FloatingActionButton(
+          backgroundColor: _isLoading ? Colors.red : Colors.blueAccent,
+          onPressed: _isLoading ? _cancelMessage : _sendMessage,
+          child: Icon(
+            _isLoading ? Icons.stop : Icons.send,
+            size: 24,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    ],
+  ),
+),
         ],
       ),
     );

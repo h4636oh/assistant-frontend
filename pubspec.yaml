@@ -27,3 +27,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+  - family: nasa
+    fonts:
+      - asset: assets/fonts/Nasalization.otf
+
