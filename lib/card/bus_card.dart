@@ -190,22 +190,21 @@ class BusCard extends StatelessWidget {
 }
 
 /// Returns a list of BusCard widgets using sample bus data.
-List<BusCard> getBusCards(dynamic response) {
-  final List<Map<String, dynamic>> busDataList = response;
-
-  return busDataList.map((busData) {
+List<BusCard> getBusCards(List<Map<String, String>> response) {
+  final List<Map<String, String>> busDataList = response;
+  return busDataList.map((response) {
     return BusCard(
-      busName: busData["bus_name"],
-      busType: busData["bus_type"],
-      departureTime: busData["departure_time"],
-      departureDate: busData["departure_date"],
-      arrivalTime: busData["arrival_time"],
-      arrivalDate: busData["arrival_date"],
-      duration: busData["duration"],
-      finalPrice: busData["final_price"],
-      rating: busData["rating"],
-      seatsAvailable: busData["seats_available"],
-      url: busData["url"],
+      busName: response["bus_name"] ?? "",
+      busType: response["bus_type"] ?? "",
+      departureTime: response["departure_time"] ?? "",
+      departureDate: response["departure_date"] ?? "",
+      arrivalTime: response["arrival_time"] ?? "",
+      arrivalDate: response["arrival_date"] ?? "",
+      duration: response["duration"] ?? "",
+      finalPrice: response["final_price"] ?? "",
+      rating: response["rating"] ?? "",
+      seatsAvailable: response["seats_available"] ?? "",
+      url: response["url"] ?? "",
     );
   }).toList();
 }

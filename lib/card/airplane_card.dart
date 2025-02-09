@@ -194,22 +194,22 @@ class AirplaneCard extends StatelessWidget {
 }
 
 /// Returns a list of AirplaneCard widgets using sample airplane data.
-List<AirplaneCard> getAirplaneCards(dynamic response) {
-  final List<Map<String, dynamic>> airplaneDataList = response;
+List<AirplaneCard> getAirplaneCards(List<Map<String, String>> response) {
+  final List<Map<String, String>> airplaneDataList = response;
 
-  return airplaneDataList.map((airplaneData) {
+  return airplaneDataList.map((response) {
     return AirplaneCard(
-      planeName: airplaneData["plane_name"],
-      planeType: airplaneData["plane_type"],
-      departureTime: airplaneData["departure_time"],
-      departureDate: airplaneData["departure_date"],
-      arrivalTime: airplaneData["arrival_time"],
-      arrivalDate: airplaneData["arrival_date"],
-      duration: airplaneData["duration"],
-      finalPrice: airplaneData["final_price"],
-      nonstop: airplaneData["nonstop"],
-      seatsAvailable: airplaneData["seats_available"],
-      url: airplaneData["url"],
+      planeName: response["plane_name"] ?? "",
+      planeType: response["plane_type"] ?? "",
+      departureTime: response["departure_time"] ?? "",
+      departureDate: response["departure_date"] ?? "",
+      arrivalTime: response["arrival_time"] ?? "",
+      arrivalDate: response["arrival_date"] ?? "",
+      duration: response["duration"] ?? "",
+      finalPrice: response["final_price"] ?? "",
+      nonstop: response["nonstop"] ?? "",
+      seatsAvailable: response["seats_available"] ?? "",
+      url: response["url"] ?? "",
     );
   }).toList();
 }

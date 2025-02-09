@@ -69,34 +69,35 @@ class _ChatScreenState extends State<ChatScreen> {
   http.Client? _client; // HTTP client for making/canceling requests.
 
   /// Sends the message to the server and waits for the reply.
-  Future<String> sendString(String message) async {
-    
+  Future<dynamic> sendString(String message) async {
     // final url = Uri.parse('https://mighty-sailfish-touched.ngrok-free.app'); // Piyush
     // final url = Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Deepanshu
-    final url = Uri.parse('https://just-mainly-monster.ngrok-free.app'); // Siddhanth
-    
+    final url =
+        Uri.parse('https://just-mainly-monster.ngrok-free.app'); // Siddhanth
+
     _client = http.Client();
     try {
       final response = await _client!
-        .post(
-          url,
-          // headers: {"Content-Type": "application/json"},
-          // body: jsonEncode({"message": message, "history": history}),
-          headers: {'Content-Type': 'text/plain',},
-          body: message,
+          .post(
+        url,
+        // headers: {"Content-Type": "application/json"},
+        // body: jsonEncode({"message": message, "history": history}),
+        headers: {'Content-Type': 'text/plain', 'Accept': 'application/json'},
+        body: message,
       )
-        .timeout(
-          const Duration(seconds: 60), // Timeout to prevent infinite waiting
-          onTimeout: () {
-            throw Exception('Request timed out');
-          },
+          .timeout(
+        const Duration(seconds: 60), // Timeout to prevent infinite waiting
+        onTimeout: () {
+          throw Exception('Request timed out');
+        },
       );
 
       _client?.close();
       _client = null;
 
       if (response.statusCode == 200) {
-        return response.body;
+        debugPrint(response.body.toString());
+        return jsonDecode(response.body);
       } else {
         return 'Error: ${response.statusCode}';
       }
@@ -159,8 +160,26 @@ class _ChatScreenState extends State<ChatScreen> {
     });
 
     // Wait until the HTTP request completes.
-    String response = await sendString(inputText);
-    history.add({"role": "assistant", "content": response});
+    final response = await sendString(inputText);
+    history.add({"role": "assistant", "content": response.toString()});
+
+    List<Map<String, String>> quoteKeysAndValues(dynamic response) {
+      // First, ensure that response is a List<dynamic>
+      final List<dynamic> list = response as List<dynamic>;
+
+      // Now, convert each element to Map<String, String>
+      final List<Map<String, String>> quotedMaps = list.map((item) {
+        final Map<String, dynamic> map = item as Map<String, dynamic>;
+        return map
+            .map((key, value) => MapEntry(key.toString(), value.toString()));
+      }).toList();
+
+      // Return the JSON-encoded string.
+      return quotedMaps;
+    }
+
+    List<Map<String, String>> responseData =
+        quoteKeysAndValues(response["data"]);
 
     // If the request was canceled, _isLoading would be false.
     if (!_isLoading) {
@@ -174,42 +193,42 @@ class _ChatScreenState extends State<ChatScreen> {
 
     // Process the server response.
     setState(() {
-      if (response.startsWith("Error: ")) {
+      // if (response.startsWith("Error: ")) {
+      //   messages.add({
+      //     "type": "text",
+      //     "text": response,
+      //     "sender": "system",
+      //   });
+      // } else {
+      if (response["type"] == "bus") {
+        addBusCardsToMessages(responseData);
+      } else if (response["type"] == "airplane") {
+        addAirplaneCardsToMessages(responseData);
+      } else if (response["type"] == "amazon") {
+        addAmazonCardsToMessages(responseData);
+      } else if (response["type"] == "airbnb") {
+        addAirbnbCardsToMessages(responseData);
+      } else if (response["type"] == "booking") {
+        addBookingCardsToMessages(responseData);
+      } else if (response["type"] == "restaurant") {
+        addRestaurantCardsToMessages(responseData);
+      } else if (response["type"] == "fashion") {
+        addFashionShoppingCardsToMessages(responseData);
+      } else if (response["type"] == "movietime") {
+        addMovieTimeingCardToMessages(responseData);
+      } else if (response["type"] == "movieslist") {
+        addMoviesListCardsToMessages(responseData);
+      } else if (response["type"] == "perplexity") {
+        addPerplexityCardsToMessages(responseData);
+      } else if (response["type"] == "uber") {
+        addUberCardsToMessages(responseData);
+      } else {
         messages.add({
           "type": "text",
           "text": response,
-          "sender": "system",
+          "sender": "bot",
         });
-      } else {
-        if (inputText.startsWith("bus")) {
-          addBusCardsToMessages();
-        } else if (inputText.startsWith("airplane")) {
-          addAirplaneCardsToMessages();
-        } else if (inputText.startsWith("amazon")) {
-          addAmazonCardsToMessages();
-        } else if (inputText.startsWith("airbnb")) {
-          addAirbnbCardsToMessages();
-        } else if (inputText.startsWith("booking")) {
-          addBookingCardsToMessages();
-        } else if (inputText.startsWith("restaurant")) {
-          addRestaurantCardsToMessages();
-        } else if (inputText.startsWith("fashion")) {
-          addFashionShoppingCardsToMessages();
-        } else if (inputText.startsWith("mtime")) {
-          addMovieTimeingCardToMessages();
-        } else if (inputText.startsWith("movieslist")) {
-          addMoviesListCardsToMessages();
-        } else if (inputText.startsWith("perplexity")) {
-          addPerplexityCardsToMessages();
-        } else if (inputText.startsWith("uber")) {
-          addUberCardsToMessages();
-        } else {
-          messages.add({
-            "type": "text",
-            "text": response,
-            "sender": "bot",
-          });
-        }
+        // }
       }
       _isLoading = false;
     });
@@ -230,8 +249,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   /// Adds Uber card messages.
-  void addUberCardsToMessages() {
-    List<UberCard> uberCards = getUberCards();
+  void addUberCardsToMessages(List<Map<String, String>> response) {
+    List<UberCard> uberCards = getUberCards(response);
     for (var uberCard in uberCards) {
       messages.add({
         "type": "uber",
@@ -242,7 +261,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   /// Adds Movie Timings card messages.
-  void addMovieTimeingCardToMessages() {
+  void addMovieTimeingCardToMessages(List<Map<String, String>> response) {
     List<MoviesTimingCard> moviesTimingCards = getMoviesTimingCards();
     for (var moviesTimingCard in moviesTimingCards) {
       messages.add({
@@ -254,8 +273,9 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   /// Adds bus card messages.
-  void addBusCardsToMessages() {
-    List<BusCard> busCards = getBusCards();
+  void addBusCardsToMessages(List<Map<String, String>> response) {
+    debugPrint(response.runtimeType.toString());
+    List<BusCard> busCards = getBusCards(response);
     for (var busCard in busCards) {
       messages.add({
         "type": "bus",
@@ -266,8 +286,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   /// Adds airplane card messages.
-  void addAirplaneCardsToMessages() {
-    List<AirplaneCard> airplaneCards = getAirplaneCards();
+  void addAirplaneCardsToMessages(List<Map<String, String>> response) {
+    List<AirplaneCard> airplaneCards = getAirplaneCards(response);
     for (var airplaneCard in airplaneCards) {
       messages.add({
         "type": "airplane",
@@ -278,8 +298,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   /// Adds amazon card messages.
-  void addAmazonCardsToMessages() {
-    List<AmazonCard> amazonCards = getAmazonCards();
+  void addAmazonCardsToMessages(List<Map<String, String>> response) {
+    List<AmazonCard> amazonCards = getAmazonCards(response);
     for (var amazonCard in amazonCards) {
       messages.add({
         "type": "amazon",
@@ -290,8 +310,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   /// Adds airbnb card messages.
-  void addAirbnbCardsToMessages() {
-    List<AirbnbCard> airbnbCards = getAirbnbCards();
+  void addAirbnbCardsToMessages(List<Map<String, String>> response) {
+    List<AirbnbCard> airbnbCards = getAirbnbCards(response);
     for (var airbnbCard in airbnbCards) {
       messages.add({
         "type": "airbnb",
@@ -302,8 +322,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   /// Adds booking dot com card messages.
-  void addBookingCardsToMessages() {
-    List<BookingCard> bookingCards = getBookingCards();
+  void addBookingCardsToMessages(List<Map<String, String>> response) {
+    List<BookingCard> bookingCards = getBookingCards(response);
     for (var bookingCard in bookingCards) {
       messages.add({
         "type": "booking",
@@ -314,8 +334,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   /// Adds restaurant card messages.
-  void addRestaurantCardsToMessages() {
-    List<RestaurantCard> restaurantCards = getRestaurantCards();
+  void addRestaurantCardsToMessages(List<Map<String, String>> response) {
+    List<RestaurantCard> restaurantCards = getRestaurantCards(response);
     for (var restaurantCard in restaurantCards) {
       messages.add({
         "type": "restaurant",
@@ -326,8 +346,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   /// Adds fashion shopping card messages.
-  void addFashionShoppingCardsToMessages() {
-    List<FashionShopping> fashionCards = getFashionCards();
+  void addFashionShoppingCardsToMessages(List<Map<String, String>> response) {
+    List<FashionShopping> fashionCards = getFashionCards(response);
     for (var fashionCard in fashionCards) {
       messages.add({
         "type": "fashion",
@@ -338,7 +358,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   /// Adds movies list card messages.
-  void addMoviesListCardsToMessages() {
+  void addMoviesListCardsToMessages(List<Map<String, String>> response) {
     List<MovieList> moviesCards = getMoviesListCards();
     for (var moviesCard in moviesCards) {
       messages.add({
@@ -350,8 +370,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   /// Adds perplexity card messages.
-  void addPerplexityCardsToMessages() {
-    List<PerplexityCard> perplexityCards = getPerplexityCards();
+  void addPerplexityCardsToMessages(List<Map<String, String>> response) {
+    List<PerplexityCard> perplexityCards = getPerplexityCards(response);
     for (var perplexityCard in perplexityCards) {
       messages.add({
         "type": "perplexity",
