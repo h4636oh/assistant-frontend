@@ -123,13 +123,15 @@ class BookingCard extends StatelessWidget {
                 child: Row(
                   children: [
                     Icon(
-                      Breakfast_included.toLowerCase() == "yes" ? Icons.restaurant : Icons.no_meals,
-                      color: Colors.green,
+                      Breakfast_included.toLowerCase() == "true" ? Icons.restaurant : Icons.no_meals,
+                      color: Breakfast_included.toLowerCase() == "true"
+                          ? Colors.green
+                          : Colors.red,
                       size: 18,
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      Breakfast_included.toLowerCase() == "yes"
+                      Breakfast_included.toLowerCase() == "true"
                           ? "Breakfast Included"
                           : "No Breakfast",
                       style: const TextStyle(
