@@ -190,35 +190,8 @@ class BusCard extends StatelessWidget {
 }
 
 /// Returns a list of BusCard widgets using sample bus data.
-List<BusCard> getBusCards() {
-  final List<Map<String, dynamic>> busDataList = [
-    {
-      "bus_name": "NueGo",
-      "bus_type": "AC Seater 2+2 Electric",
-      "departure_time": "11:30 PM",
-      "departure_date": "10 Feb",
-      "arrival_time": "05:05 AM",
-      "arrival_date": "11 Feb",
-      "duration": "05h 35m",
-      "final_price": "346",
-      "rating": "3.5",
-      "seats_available": "17",
-      "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
-    },
-    {
-      "bus_name": "NueGo",
-      "bus_type": "AC Seater 2+2 Electric",
-      "departure_time": "11:00 PM",
-      "departure_date": "10 Feb",
-      "arrival_time": "04:35 AM",
-      "arrival_date": "11 Feb",
-      "duration": "05h 35m",
-      "final_price": "346",
-      "rating": "3.6",
-      "seats_available": "20",
-      "url": "https://tickets.paytm.com/bus/search/Delhi/Jaipur/2025-02-10/1"
-    }
-  ];
+List<BusCard> getBusCards(dynamic response) {
+  final List<Map<String, dynamic>> busDataList = response;
 
   return busDataList.map((busData) {
     return BusCard(

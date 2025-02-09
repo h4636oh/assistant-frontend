@@ -194,36 +194,8 @@ class AirplaneCard extends StatelessWidget {
 }
 
 /// Returns a list of AirplaneCard widgets using sample airplane data.
-List<AirplaneCard> getAirplaneCards() {
-  final List<Map<String, dynamic>> airplaneDataList = [
-    {
-      "plane_name": "IndiGo",
-      "plane_type": "Economy",
-      "departure_time": "06:05",
-      "departure_date": "10 Feb",
-      "arrival_time": "07:35",
-      "arrival_date": "10 Feb",
-      "duration": "01h 30m",
-      "final_price": "1,516",
-      "nonstop": "No",
-      "seats_available": "20",
-      "url": "https://www.goindigo.in/flight-status.html"
-    },
-    {
-      "plane_name": "Emirates",
-      "plane_type": "Boeing 747",
-      "departure_time": "10:30 AM",
-      "departure_date": "15 Mar",
-      "arrival_time": "01:45 PM",
-      "arrival_date": "15 Mar",
-      "duration": "03h 15m",
-      "final_price": "750",
-      "nonstop": "Yes",
-      "seats_available": "45",
-      "url":
-          "https://tickets.example.com/flight/search/NewYork/LosAngeles/2025-03-15/1"
-    }
-  ];
+List<AirplaneCard> getAirplaneCards(dynamic response) {
+  final List<Map<String, dynamic>> airplaneDataList = response;
 
   return airplaneDataList.map((airplaneData) {
     return AirplaneCard(

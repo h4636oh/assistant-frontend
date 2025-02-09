@@ -175,31 +175,8 @@ class AirbnbCard extends StatelessWidget {
   }
 }
 
-List<AirbnbCard> getAirbnbCards() {
-  final List<Map<String, dynamic>> airbnbDataList = [
-    {
-      "image_url":
-          "https://a0.muscache.com/im/pictures/6645a719-dc78-44a3-9a05-38920c2ac527.jpg?im_w=720&im_format=avif",
-      "payment_url":
-          "https://www.airbnb.co.in/rooms/1252006468109509167?adults=1&search_mode=regular_search&check_in=2025-02-09&check_out=2025-02-14&source_impression_id=p3_1738780338_P3mUh3vS69u3_BV-&previous_page_section_name=1000&federated_search_id=c8193494-d40f-4203-9131-a4d179497cad",
-      "hotel_name": "Flat in Calangute",
-      "location": "Flat in Calangute",
-      "rating_reviews": "4.92 (36)",
-      "total_price": "₹6,495",
-      "tag_text": "Superhost",
-    },
-    {
-      "image_url":
-          "https://a0.muscache.com/im/pictures/miso/Hosting-836057693936248879/original/30b2b61d-3aa4-4653-8751-83252cdf7071.jpeg?im_w=720&im_format=avif",
-      "payment_url":
-          "https://www.airbnb.co.in/rooms/1252006468109509167?adults=1&search_mode=regular_search&check_in=2025-02-09&check_out=2025-02-14&source_impression_id=p3_1738780338_P3mUh3vS69u3_BV-&previous_page_section_name=1000&federated_search_id=c8193494-d40f-4203-9131-a4d179497cad",
-      "hotel_name": "Flat in Calangute",
-      "location": "Flat in Calangute near Scenic studio apartment at Baga",
-      "rating_reviews": "4.86 (74)",
-      "total_price": "₹6,495",
-      "tag_text": "Cozy"
-    }
-  ];
+List<AirbnbCard> getAirbnbCards(dynamic response) {
+  final List<Map<String, dynamic>> airbnbDataList = response;
 
   return airbnbDataList.map((airbnbData) {
     return AirbnbCard(

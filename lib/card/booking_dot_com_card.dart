@@ -181,20 +181,8 @@ class BookingCard extends StatelessWidget {
   }
 }
 
-List<BookingCard> getBookingCards() {
-  final List<Map<String, dynamic>> scrapedDataList = [
-    {
-      "image_url":
-          "https://cf.bstatic.com/xdata/images/hotel/square600/467538050.webp?k=4dc63210102a80dd6904d8585500732c30b2e16c643a461699fcca1649ee92ee&o=",
-      "hotel_url": "https://www.booking.com/hotel/73498739",
-      "title": "Cozy 1BHK Flat in South Delhi",
-      "review_comment": "Comfortable and peaceful stay.",
-      "rating": 4.78,
-      "review_count": 58,
-      "price": 8000.0,
-      "Breakfast_included": true
-    }
-  ];
+List<BookingCard> getBookingCards(dynamic response) {
+  final List<Map<String, dynamic>> scrapedDataList = response;
 
   return scrapedDataList.map((data) {
     return BookingCard(

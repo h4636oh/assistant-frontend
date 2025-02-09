@@ -175,45 +175,8 @@ class FashionShopping extends StatelessWidget {
   }
 }
 
-List<FashionShopping> getFashionCards() {
-  final List<Map<String, dynamic>> productDataList = [
-    {
-      "imageUrl":
-          "https://images.bewakoof.com/t1080/men-s-blue-white-color-block-oversized-polo-zipper-t-shirt-637203-1715258319-1.jpg",
-      "productUrl":
-          "https://www.bewakoof.com/p/mens-blue-white-color-block-oversized-polo-zipper-t-shirt",
-      "title": "Men's Blue & White Color Block Oversized Polo Zipper T-shirt",
-      "brand": "bewakoof",
-      "price": 1170.00,
-    },
-    {
-      "imageUrl":
-          "https://images.bewakoof.com/t1080/men-angry-zip-printed-t-shirt-577430-1679027317-1.jpg",
-      "productUrl":
-          "https://www.bewakoof.com/p/men-angry-zip-printed-t-shirt-men",
-      "title": "Men's Blue Angry Zip Graphic Printed T-shirt",
-      "brand": "bewakoof",
-      "price": 399.00,
-    },
-    {
-      "imageUrl":
-          "https://images.bewakoof.com/t1080/men-s-blue-white-color-block-oversized-polo-zipper-t-shirt-637203-1715258319-1.jpg",
-      "productUrl":
-          "https://www.bewakoof.com/p/mens-blue-white-color-block-oversized-polo-zipper-t-shirt",
-      "title": "Men's Blue & White Color Block Oversized Polo Zipper T-shirt",
-      "brand": "bewakoof",
-      "price": 1170.00,
-    },
-    {
-      "imageUrl":
-          "https://wrogn.com/cdn/shop/files/1_35fb28db-cf18-48a0-a994-f614b9fb3aaa.jpg",
-      "productUrl":
-          "https://wrogn.com/products/urban-pink-aop-oversized-t-shirt?_pos=127&_fid=c3fb51a6d&_ss=c",
-      "title": "Urban Pink AOP Oversized T-Shirt",
-      "brand": "wrogn",
-      "price": 599.00,
-    }
-  ];
+List<FashionShopping> getFashionCards(dynamic response) {
+  final List<Map<String, dynamic>> productDataList = response;
 
   return productDataList.map((data) {
     return FashionShopping(
