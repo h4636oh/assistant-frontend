@@ -80,10 +80,10 @@ class _ChatScreenState extends State<ChatScreen> {
       final response = await _client!
           .post(
         url,
-        // headers: {"Content-Type": "application/json"},
-        // body: jsonEncode({"message": message, "history": history}),
-        headers: {'Content-Type': 'text/plain', 'Accept': 'application/json'},
-        body: message,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"message": message, "history": history}),
+        // headers: {'Content-Type': 'text/plain', 'Accept': 'application/json'},
+        // body: message,
       )
           .timeout(
         const Duration(seconds: 60), // Timeout to prevent infinite waiting
