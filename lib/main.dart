@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
+import 'dart:convert';
 import 'card/bus_card.dart';
 import 'card/airplane_card.dart';
 import 'card/airbnb_card.dart';
@@ -30,6 +31,8 @@ void main() {
   HttpOverrides.global = MyHttpOverrides();
   runApp(const ChatApp());
 }
+
+List<Map<String, String>> history = [];
 
 class ChatApp extends StatelessWidget {
   const ChatApp({super.key});
@@ -67,21 +70,26 @@ class _ChatScreenState extends State<ChatScreen> {
 
   /// Sends the message to the server and waits for the reply.
   Future<String> sendString(String message) async {
+    
     // final url = Uri.parse('https://mighty-sailfish-touched.ngrok-free.app'); // Piyush
-    final url = Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Deepanshu
+    // final url = Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Deepanshu
+    final url = Uri.parse('https://just-mainly-monster.ngrok-free.app'); // Siddhanth
+    
     _client = http.Client();
     try {
       final response = await _client!
-          .post(
-        url,
-        headers: {"Content-Type": "text/plain"},
-        body: message,
+        .post(
+          url,
+          // headers: {"Content-Type": "application/json"},
+          // body: jsonEncode({"message": message, "history": history}),
+          headers: {'Content-Type': 'text/plain',},
+          body: message,
       )
-          .timeout(
-        const Duration(seconds: 30), // Timeout to prevent infinite waiting
-        onTimeout: () {
-          throw Exception('Request timed out');
-        },
+        .timeout(
+          const Duration(seconds: 60), // Timeout to prevent infinite waiting
+          onTimeout: () {
+            throw Exception('Request timed out');
+          },
       );
 
       _client?.close();
@@ -138,6 +146,7 @@ class _ChatScreenState extends State<ChatScreen> {
         "text": inputText,
         "sender": "user",
       });
+      history.add({"role": "user", "content": inputText});
     });
 
     // Add a loading indicator message.
@@ -151,6 +160,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     // Wait until the HTTP request completes.
     String response = await sendString(inputText);
+    history.add({"role": "assistant", "content": response});
 
     // If the request was canceled, _isLoading would be false.
     if (!_isLoading) {
@@ -554,57 +564,60 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
           ),
-Padding(
-  padding: const EdgeInsets.all(8.0),
-  child: Row(
-    crossAxisAlignment: CrossAxisAlignment.center, // Align items in the center vertically
-    children: [
-      // TextField wrapped in SizedBox
-      Expanded(
-        child: SizedBox(
-          height: 56, // Match FloatingActionButton's default height (56)
-          child: TextField(
-            controller: _controller,
-            focusNode: _focusNode,
-            enabled: !_isLoading,
-            style: const TextStyle(color: Colors.white),
-            onSubmitted: (value) => _sendMessage(),
-            textInputAction: TextInputAction.send,
-            decoration: InputDecoration(
-              hintText: "Ask something...",
-              hintStyle: const TextStyle(color: Colors.grey),
-              filled: true,
-              fillColor: _isLoading ? Colors.grey : Colors.grey[900],
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 20, // Adjust padding for better alignment
-                horizontal: 12,
-              ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment
+                  .center, // Align items in the center vertically
+              children: [
+                // TextField wrapped in SizedBox
+                Expanded(
+                  child: SizedBox(
+                    height:
+                        56, // Match FloatingActionButton's default height (56)
+                    child: TextField(
+                      controller: _controller,
+                      focusNode: _focusNode,
+                      enabled: !_isLoading,
+                      style: const TextStyle(color: Colors.white),
+                      onSubmitted: (value) => _sendMessage(),
+                      textInputAction: TextInputAction.send,
+                      decoration: InputDecoration(
+                        hintText: "Ask something...",
+                        hintStyle: const TextStyle(color: Colors.grey),
+                        filled: true,
+                        fillColor: _isLoading ? Colors.grey : Colors.grey[900],
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 20, // Adjust padding for better alignment
+                          horizontal: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8), // Space between TextField and button
+                // FloatingActionButton wrapped in a SizedBox
+                SizedBox(
+                  height: 56, // Match default FAB height
+                  width: 56, // Match default FAB width
+                  child: FloatingActionButton(
+                    backgroundColor:
+                        _isLoading ? Colors.red : Colors.blueAccent,
+                    onPressed: _isLoading ? _cancelMessage : _sendMessage,
+                    child: Icon(
+                      _isLoading ? Icons.stop : Icons.send,
+                      size: 24,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-        ),
-      ),
-      const SizedBox(width: 8), // Space between TextField and button
-      // FloatingActionButton wrapped in a SizedBox
-      SizedBox(
-        height: 56, // Match default FAB height
-        width: 56,  // Match default FAB width
-        child: FloatingActionButton(
-          backgroundColor: _isLoading ? Colors.red : Colors.blueAccent,
-          onPressed: _isLoading ? _cancelMessage : _sendMessage,
-          child: Icon(
-            _isLoading ? Icons.stop : Icons.send,
-            size: 24,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    ],
-  ),
-),
         ],
       ),
     );
