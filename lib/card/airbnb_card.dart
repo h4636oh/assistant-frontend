@@ -135,7 +135,9 @@ class AirbnbCard extends StatelessWidget {
                           ],
                         ),
                         Text(
-                          '\u{20B9}${totalPrice.substring(0, totalPrice.length - 6)}',
+                          totalPrice.length > 6
+                              ? '\u{20B9}${totalPrice.substring(0, totalPrice.length - 6)}'
+                              : '\u{20B9}$totalPrice',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -180,9 +182,10 @@ List<AirbnbCard> getAirbnbCards(dynamic response) {
 
   return airbnbDataList.map((response) {
     return AirbnbCard(
-      imageUrl: response["image_url"] ?? "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTI3NTIzMzkxNjA2NTIzNTUxNg%3D%3D/original/4aad2d01-214c-4cf2-9dac-a17a1c2b77ab.jpeg?im_w=720&im_format=avif",           // Default to empty string
+      imageUrl: response["image_url"] ??
+          "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTI3NTIzMzkxNjA2NTIzNTUxNg%3D%3D/original/4aad2d01-214c-4cf2-9dac-a17a1c2b77ab.jpeg?im_w=720&im_format=avif", // Default to empty string
       paymentUrl: response["payment_url"] ?? "",
-      hotelName: response["hotel_name"] ?? "Unknown",  // Fallback value
+      hotelName: response["hotel_name"] ?? "Unknown", // Fallback value
       location: response["location"] ?? "Unknown",
       ratingReviews: response["rating_reviews"] ?? "0.0 (0)",
       totalPrice: response["total_price"] ?? "N/A",

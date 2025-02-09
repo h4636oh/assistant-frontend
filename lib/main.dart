@@ -96,7 +96,7 @@ class _ChatScreenState extends State<ChatScreen> {
       _client = null;
 
       if (response.statusCode == 200) {
-        // debugPrint(response.body.toString());
+        debugPrint(response.body.toString());
         return jsonDecode(response.body);
       } else {
         return 'Error: ${response.statusCode}';
@@ -487,12 +487,17 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: const Text(
           "ATHENA",
-          style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "nasa", letterSpacing: 5, fontSize: 30),
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontFamily: "nasa",
+              letterSpacing: 5,
+              fontSize: 30),
         ),
         centerTitle: true,
         backgroundColor: Colors.blueAccent,
         leading: IconButton(
-          icon: const Icon(Icons.replay_circle_filled_outlined, color: Colors.white),
+          icon: const Icon(Icons.replay_circle_filled_outlined,
+              color: Colors.white),
           iconSize: 32,
           onPressed: () {
             setState(() {
@@ -641,7 +646,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   height: 56, // Match default FAB height
                   width: 56, // Match default FAB width
                   child: FloatingActionButton(
-                    backgroundColor: _isLoading ? Colors.red : Colors.blueAccent,
+                    backgroundColor:
+                        _isLoading ? Colors.red : Colors.blueAccent,
                     onPressed: _isLoading ? _cancelMessage : _sendMessage,
                     child: Icon(
                       _isLoading ? Icons.stop : Icons.send,
