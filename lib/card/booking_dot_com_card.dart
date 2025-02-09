@@ -8,11 +8,11 @@ class BookingCard extends StatelessWidget {
   final String image_url;
   final String hotel_url;
   final String title;
-  final double rating;
-  final int review_count;
+  final String rating;
+  final String review_count;
   final String review_comment;
-  final double price;
-  final bool Breakfast_included;
+  final String price;
+  final String Breakfast_included;
 
   const BookingCard({
     super.key,
@@ -123,13 +123,13 @@ class BookingCard extends StatelessWidget {
                 child: Row(
                   children: [
                     Icon(
-                      Breakfast_included ? Icons.restaurant : Icons.no_meals,
+                      Breakfast_included.toLowerCase() == "yes" ? Icons.restaurant : Icons.no_meals,
                       color: Colors.green,
                       size: 18,
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      Breakfast_included
+                      Breakfast_included.toLowerCase() == "yes"
                           ? "Breakfast Included"
                           : "No Breakfast",
                       style: const TextStyle(
@@ -162,7 +162,7 @@ class BookingCard extends StatelessWidget {
                       ],
                     ),
                     Text(
-                      '₹${price.toStringAsFixed(0)}',
+                      '₹$price',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

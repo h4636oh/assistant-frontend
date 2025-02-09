@@ -178,8 +178,12 @@ class _ChatScreenState extends State<ChatScreen> {
       return quotedMaps;
     }
 
-    List<Map<String, String>> responseData =
-        quoteKeysAndValues(response["data"]);
+    List<Map<String, String>> responseData = [];
+    if (response["data"] is List) {
+      responseData = quoteKeysAndValues(response["data"]);
+    } else if (response["data"] is Map) {
+      responseData = quoteKeysAndValues([response["data"]]); // Wrap it in a list
+    }
 
     // If the request was canceled, _isLoading would be false.
     if (!_isLoading) {
@@ -193,13 +197,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
     // Process the server response.
     setState(() {
-      // if (response.startsWith("Error: ")) {
-      //   messages.add({
-      //     "type": "text",
-      //     "text": response,
-      //     "sender": "system",
-      //   });
-      // } else {
+      if (response is String) {
+        messages.add({
+          "type": "text",
+          "text": response,
+          "sender": "bot",
+        });
+      } else {
       if (response["type"] == "bus") {
         addBusCardsToMessages(responseData);
       } else if (response["type"] == "airplane") {
@@ -228,7 +232,7 @@ class _ChatScreenState extends State<ChatScreen> {
           "text": response,
           "sender": "bot",
         });
-        // }
+        }
       }
       _isLoading = false;
     });

@@ -178,15 +178,15 @@ class AirbnbCard extends StatelessWidget {
 List<AirbnbCard> getAirbnbCards(dynamic response) {
   final List<Map<String, dynamic>> airbnbDataList = response;
 
-  return airbnbDataList.map((airbnbData) {
+  return airbnbDataList.map((response) {
     return AirbnbCard(
-      imageUrl: airbnbData["image_url"] ?? "",           // Default to empty string
-      paymentUrl: airbnbData["payment_url"] ?? "",
-      hotelName: airbnbData["hotel_name"] ?? "Unknown",  // Fallback value
-      location: airbnbData["location"] ?? "Unknown",
-      ratingReviews: airbnbData["rating_reviews"] ?? "0.0 (0)",
-      totalPrice: airbnbData["total_price"] ?? "N/A",
-      tagText: airbnbData["tag_text"] ?? "",
+      imageUrl: response["image_url"] ?? "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTI3NTIzMzkxNjA2NTIzNTUxNg%3D%3D/original/4aad2d01-214c-4cf2-9dac-a17a1c2b77ab.jpeg?im_w=720&im_format=avif",           // Default to empty string
+      paymentUrl: response["payment_url"] ?? "",
+      hotelName: response["hotel_name"] ?? "Unknown",  // Fallback value
+      location: response["location"] ?? "Unknown",
+      ratingReviews: response["rating_reviews"] ?? "0.0 (0)",
+      totalPrice: response["total_price"] ?? "N/A",
+      tagText: response["tag_text"] ?? "",
     );
   }).toList();
 }

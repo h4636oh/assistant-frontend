@@ -157,9 +157,14 @@ class BusCard extends StatelessWidget {
                       "Duration: $duration",
                       style: const TextStyle(color: Colors.white),
                     ),
-                    Text(
-                      "Rating: $rating",
-                      style: const TextStyle(color: Colors.white),
+                    Row(
+                      children: [
+                        const Icon(Icons.star, color: Colors.orange, size: 18),
+                        Text(
+                          rating,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -172,10 +177,11 @@ class BusCard extends StatelessWidget {
                       style: const TextStyle(color: Colors.white),
                     ),
                     Text(
-                      "Price: ₹$finalPrice",
+                      "₹$finalPrice",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
+                        fontSize: 16,
                       ),
                     ),
                   ],
