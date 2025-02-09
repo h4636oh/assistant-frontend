@@ -487,7 +487,7 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: const Text(
           "ATHENA",
-          style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "nasa"),
+          style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "nasa", letterSpacing: 5, fontSize: 30),
         ),
         centerTitle: true,
         backgroundColor: Colors.blueAccent,
