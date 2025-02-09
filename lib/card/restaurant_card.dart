@@ -7,7 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 class RestaurantCard extends StatelessWidget {
   final String name;
-  final int number; // e.g. number of reviews
+  final String number; // e.g. number of reviews
   final String rating;
   final String image_url;
   final String restaurant_url;
@@ -152,17 +152,17 @@ class RestaurantCard extends StatelessWidget {
 }
 
 // Example data generator for RestaurantCard widgets
-List<RestaurantCard> getRestaurantCards(dynamic response) {
-  final List<Map<String, dynamic>> restaurantDataList = response;
+List<RestaurantCard> getRestaurantCards(List<Map<String, String>> response) {
+  final List<Map<String, String>> restaurantDataList = response;
 
-  return restaurantDataList.map((data) {
+  return restaurantDataList.map((response) {
     return RestaurantCard(
-      image_url: data["image_url"],
-      restaurant_url: data["restaurant_url"],
-      name: data["name"],
-      rating: data["rating"],
-      number: data["number"],
-      tags: List<String>.from(data["tags"]),
+      image_url: response["image_url"] ?? "",
+      restaurant_url: response["restaurant_url"] ?? "",
+      name: response["name"] ?? "",
+      rating: response["rating"] ?? "",
+      number: response["number"] ?? "",
+      tags: (response["tags"] ?? "").split(",").map((e) => e.trim()).toList()
     );
   }).toList();
 }
