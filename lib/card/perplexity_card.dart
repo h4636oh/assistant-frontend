@@ -67,11 +67,13 @@ class PerplexityCard extends StatelessWidget {
       children: [
         const Text(
           "Sources:",
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(
+              fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
         ),
         const SizedBox(height: 4),
         Column(
-          children: sources.map((url) => _buildPerplexitySourceItem(url)).toList(),
+          children:
+              sources.map((url) => _buildPerplexitySourceItem(url)).toList(),
         ),
       ],
     );
@@ -85,14 +87,14 @@ class PerplexityCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 4),
         child: Row(
           children: [
-            const Icon(Icons.link, size: 18, color: Colors.blueAccent),
+            const Icon(Icons.link, size: 18, color: Colors.purple),
             const SizedBox(width: 6),
             Expanded(
               child: Text(
                 url,
                 style: const TextStyle(
                   fontSize: 14,
-                  color: Colors.blueAccent,
+                  color: Colors.purple,
                   // decoration: TextDecoration.underline,
                 ),
                 overflow: TextOverflow.ellipsis,

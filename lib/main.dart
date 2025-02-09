@@ -43,8 +43,8 @@ class ChatApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: Colors.black,
-        primaryColor: Colors.blueAccent,
-        colorScheme: const ColorScheme.dark(primary: Colors.blueAccent),
+        primaryColor: Colors.purple,
+        colorScheme: const ColorScheme.dark(primary: Colors.purple),
       ),
       home: const ChatScreen(),
     );
@@ -490,7 +490,8 @@ class _ChatScreenState extends State<ChatScreen> {
           style: TextStyle(fontWeight: FontWeight.bold, fontFamily: "nasa"),
         ),
         centerTitle: true,
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.purple,
+        leading: Icon(Icons.chat_bubble, color: Colors.white),
       ),
       body: Column(
         children: [
@@ -511,7 +512,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       margin: const EdgeInsets.symmetric(vertical: 4),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: isUser ? Colors.blueAccent : Colors.grey[800],
+                        color: isUser ? Colors.purple : Colors.grey[800],
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(
@@ -631,8 +632,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   height: 56, // Match default FAB height
                   width: 56, // Match default FAB width
                   child: FloatingActionButton(
-                    backgroundColor:
-                        _isLoading ? Colors.red : Colors.blueAccent,
+                    backgroundColor: _isLoading ? Colors.red : Colors.purple,
                     onPressed: _isLoading ? _cancelMessage : _sendMessage,
                     child: Icon(
                       _isLoading ? Icons.stop : Icons.send,
