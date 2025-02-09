@@ -80,10 +80,10 @@ class _ChatScreenState extends State<ChatScreen> {
       final response = await _client!
           .post(
         url,
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"message": message, "history": history}),
-        // headers: {'Content-Type': 'text/plain', 'Accept': 'application/json'},
-        // body: message,
+        // headers: {"Content-Type": "application/json"},
+        // body: jsonEncode({"message": message, "history": history}),
+        headers: {'Content-Type': 'text/plain', 'Accept': 'application/json'},
+        body: history.toString(),
       )
           .timeout(
         const Duration(seconds: 60), // Timeout to prevent infinite waiting
@@ -96,7 +96,7 @@ class _ChatScreenState extends State<ChatScreen> {
       _client = null;
 
       if (response.statusCode == 200) {
-        debugPrint(response.body.toString());
+        // debugPrint(response.body.toString());
         return jsonDecode(response.body);
       } else {
         return 'Error: ${response.statusCode}';
@@ -182,7 +182,8 @@ class _ChatScreenState extends State<ChatScreen> {
     if (response["data"] is List) {
       responseData = quoteKeysAndValues(response["data"]);
     } else if (response["data"] is Map) {
-      responseData = quoteKeysAndValues([response["data"]]); // Wrap it in a list
+      responseData =
+          quoteKeysAndValues([response["data"]]); // Wrap it in a list
     }
 
     // If the request was canceled, _isLoading would be false.
@@ -204,34 +205,37 @@ class _ChatScreenState extends State<ChatScreen> {
           "sender": "bot",
         });
       } else {
-      if (response["type"] == "bus") {
-        addBusCardsToMessages(responseData);
-      } else if (response["type"] == "airplane") {
-        addAirplaneCardsToMessages(responseData);
-      } else if (response["type"] == "amazon") {
-        addAmazonCardsToMessages(responseData);
-      } else if (response["type"] == "airbnb") {
-        addAirbnbCardsToMessages(responseData);
-      } else if (response["type"] == "booking") {
-        addBookingCardsToMessages(responseData);
-      } else if (response["type"] == "restaurant") {
-        addRestaurantCardsToMessages(responseData);
-      } else if (response["type"] == "fashion") {
-        addFashionShoppingCardsToMessages(responseData);
-      } else if (response["type"] == "movietime") {
-        addMovieTimeingCardToMessages(responseData);
-      } else if (response["type"] == "movieslist") {
-        addMoviesListCardsToMessages(responseData);
-      } else if (response["type"] == "perplexity") {
-        addPerplexityCardsToMessages(responseData);
-      } else if (response["type"] == "uber") {
-        addUberCardsToMessages(responseData);
-      } else {
-        messages.add({
-          "type": "text",
-          "text": response,
-          "sender": "bot",
-        });
+        if (response["type"] == "bus") {
+          addBusCardsToMessages(responseData);
+        } else if (response["type"] == "airplane") {
+          addAirplaneCardsToMessages(responseData);
+        } else if (response["type"] == "amazon") {
+          addAmazonCardsToMessages(responseData);
+        } else if (response["type"] == "airbnb") {
+          addAirbnbCardsToMessages(responseData);
+        } else if (response["type"] == "booking") {
+          addBookingCardsToMessages(responseData);
+        } else if (response["type"] == "restaurant") {
+          addRestaurantCardsToMessages(responseData);
+        } else if (response["type"] == "fashion") {
+          addFashionShoppingCardsToMessages(responseData);
+        } else if (response["type"] == "movietime") {
+          addMovieTimeingCardToMessages(responseData);
+        } else if (response["type"] == "movieslist") {
+          addMoviesListCardsToMessages(responseData);
+        } else if (response["type"] == "perplexity") {
+          addPerplexityCardsToMessages(responseData);
+        } else if (response["type"] == "uber") {
+          addUberCardsToMessages(responseData);
+        } else {
+          // FIX: Extract "data" from the response map if available.
+          messages.add({
+            "type": "text",
+            "text": response is Map && response.containsKey("data")
+                ? response["data"]
+                : response.toString(),
+            "sender": "bot",
+          });
         }
       }
       _isLoading = false;

@@ -134,10 +134,12 @@ class BookingCard extends StatelessWidget {
                       Breakfast_included.toLowerCase() == "true"
                           ? "Breakfast Included"
                           : "No Breakfast",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Colors.green,
+                        color: Breakfast_included.toLowerCase() == "true"
+                            ? Colors.green
+                            : Colors.red,
                       ),
                     ),
                   ],
@@ -189,13 +191,13 @@ List<BookingCard> getBookingCards(dynamic response) {
   return scrapedDataList.map((data) {
     return BookingCard(
       image_url: data["image_url"],
-      hotel_url: data["hotel_url"],
+      hotel_url: data["hotel url"],
       title: data["title"],
-      review_comment: data["review_comment"],
+      review_comment: data["review comment"],
       rating: data["rating"],
-      review_count: data["review_count"],
+      review_count: data["review count"],
       price: data["price"],
-      Breakfast_included: data["Breakfast_included"],
+      Breakfast_included: data["Breakfast included"] ?? "false",
     );
   }).toList();
 }

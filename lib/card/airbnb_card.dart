@@ -135,7 +135,7 @@ class AirbnbCard extends StatelessWidget {
                           ],
                         ),
                         Text(
-                          totalPrice,
+                          '\u{20B9}${totalPrice.substring(0, totalPrice.length - 6)}',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
