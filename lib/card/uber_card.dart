@@ -8,12 +8,12 @@ class UberCard extends StatelessWidget {
   final String url;
   final String pickupName;
   final String pickupAddress;
-  final double pickupLatitude;
-  final double pickupLongitude;
+  final String pickupLatitude;
+  final String pickupLongitude;
   final String dropoffName;
   final String dropoffAddress;
-  final double dropoffLatitude;
-  final double dropoffLongitude;
+  final String dropoffLatitude;
+  final String dropoffLongitude;
 
   const UberCard({
     super.key,

@@ -96,7 +96,7 @@ class _ChatScreenState extends State<ChatScreen> {
       _client = null;
 
       if (response.statusCode == 200) {
-        // debugPrint(response.body.toString());
+        debugPrint(response.body.toString());
         return jsonDecode(response.body);
       } else {
         return 'Error: ${response.statusCode}';

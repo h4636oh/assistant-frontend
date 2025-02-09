@@ -5,7 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 class FashionShopping extends StatelessWidget {
   final String imageUrl;
-  final double price;
+  final String price;
   final String title;
   final String brand;
   final String productUrl;
@@ -119,7 +119,7 @@ class FashionShopping extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        '₹${price.toStringAsFixed(0)}',
+                        '₹$price',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

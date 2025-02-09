@@ -157,11 +157,11 @@ List<RestaurantCard> getRestaurantCards(List<Map<String, String>> response) {
 
   return restaurantDataList.map((response) {
     return RestaurantCard(
-      image_url: response["image_url"] ?? "",
-      restaurant_url: response["restaurant_url"] ?? "",
+      image_url: response["image"] ?? "",
+      restaurant_url: response["url"] ?? "",
       name: response["name"] ?? "",
-      rating: response["rating"] ?? "",
-      number: response["number"] ?? "",
+      rating: response["star"] ?? "",
+      number: response["number_of_reviews"] ?? "",
       tags: (response["tags"] ?? "").split(",").map((e) => e.trim()).toList()
     );
   }).toList();
