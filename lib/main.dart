@@ -96,13 +96,13 @@ class _ChatScreenState extends State<ChatScreen> {
       _client = null;
 
       if (response.statusCode == 200) {
-        debugPrint(response.body.toString());
+        // debugPrint(response.body.toString());
         return jsonDecode(response.body);
       } else {
         return 'Error: ${response.statusCode}';
       }
     } catch (e) {
-      debugPrint('Error: $e');
+      // debugPrint('Error: $e');
       return 'Error: $e';
     }
   }
@@ -278,7 +278,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
   /// Adds bus card messages.
   void addBusCardsToMessages(List<Map<String, String>> response) {
-    debugPrint(response.runtimeType.toString());
     List<BusCard> busCards = getBusCards(response);
     for (var busCard in busCards) {
       messages.add({
@@ -512,7 +511,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(
-                        msg["text"],
+                        msg["text"].toString(),
                         style:
                             const TextStyle(color: Colors.white, fontSize: 20),
                       ),
@@ -578,7 +577,6 @@ class _ChatScreenState extends State<ChatScreen> {
                   return buildMessageWithIcon(movietimes, index, isUser);
                 } else if (msg["type"] == "perplexity") {
                   final perplexity = msg["data"] as PerplexityCard;
-                  debugPrint(perplexity.toString());
                   return buildMessageWithIcon(perplexity, index, isUser);
                 } else if (msg["type"] == "uber") {
                   final uberCard = msg["data"] as UberCard;
