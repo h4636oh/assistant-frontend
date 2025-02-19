@@ -198,36 +198,41 @@ class _ChatScreenState extends State<ChatScreen> {
 
     // Process the server response.
     setState(() {
-      if (response is String) {
-        messages.add({
-          "type": "text",
-          "text": response,
-          "sender": "bot",
-        });
-      } else {
-        if (response["type"] == "bus") {
+      switch (response["type"]) {
+        case "bus":
           addBusCardsToMessages(responseData);
-        } else if (response["type"] == "airplane") {
+          break;
+        case "airplane":
           addAirplaneCardsToMessages(responseData);
-        } else if (response["type"] == "amazon") {
+          break;
+        case "amazon":
           addAmazonCardsToMessages(responseData);
-        } else if (response["type"] == "airbnb") {
+          break;
+        case "airbnb":
           addAirbnbCardsToMessages(responseData);
-        } else if (response["type"] == "booking") {
+          break;
+        case "booking":
           addBookingCardsToMessages(responseData);
-        } else if (response["type"] == "restaurant") {
+          break;
+        case "restaurant":
           addRestaurantCardsToMessages(responseData);
-        } else if (response["type"] == "fashion") {
+          break;
+        case "fashion":
           addFashionShoppingCardsToMessages(responseData);
-        } else if (response["type"] == "movietime") {
+          break;
+        case "movietime":
           addMovieTimeingCardToMessages(responseData);
-        } else if (response["type"] == "movieslist") {
+          break;
+        case "movieslist":
           addMoviesListCardsToMessages(responseData);
-        } else if (response["type"] == "perplexity") {
+          break;
+        case "perplexity":
           addPerplexityCardsToMessages(responseData);
-        } else if (response["type"] == "uber") {
+          break;
+        case "uber":
           addUberCardsToMessages(responseData);
-        } else {
+          break;
+        default:
           // FIX: Extract "data" from the response map if available.
           messages.add({
             "type": "text",
@@ -236,7 +241,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 : response.toString(),
             "sender": "bot",
           });
-        }
       }
       _isLoading = false;
     });
@@ -519,87 +523,84 @@ class _ChatScreenState extends State<ChatScreen> {
                 final String sender = msg["sender"] ?? "bot";
                 final bool isUser = sender == "user";
 
-                if (msg["type"] == "text") {
-                  final bubble = ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: maxBubbleWidth),
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 4),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: isUser ? Colors.blueAccent : Colors.grey[800],
-                        borderRadius: BorderRadius.circular(16),
+                switch (msg["type"]) {
+                  case "text":
+                    final bubble = ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: maxBubbleWidth),
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 4),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: isUser ? Colors.blueAccent : Colors.grey[800],
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Text(
+                          msg["text"].toString(),
+                          style: const TextStyle(color: Colors.white, fontSize: 20),
+                        ),
                       ),
-                      child: Text(
-                        msg["text"].toString(),
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 20),
-                      ),
-                    ),
-                  ).animate().fade(duration: 300.ms).slideX(
-                        begin: isUser ? 1 : -1,
-                      );
-                  return buildMessageWithIcon(bubble, index, isUser);
-                } else if (msg["type"] == "loading") {
-                  final bubble = ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: maxBubbleWidth),
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 4),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[800],
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Center(
-                        child: SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.0,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
+                    ).animate().fade(duration: 300.ms).slideX(
+                          begin: isUser ? 1 : -1,
+                        );
+                    return buildMessageWithIcon(bubble, index, isUser);
+                  case "loading":
+                    final bubble = ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: maxBubbleWidth),
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 4),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[800],
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Center(
+                          child: SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.0,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ).animate().fade(duration: 300.ms).slideX(
-                        begin: isUser ? 1 : -1,
-                      );
-                  return buildMessageWithIcon(bubble, index, isUser);
-                }
-                // Card messages...
-                else if (msg["type"] == "bus") {
-                  final busCard = msg["data"] as BusCard;
-                  return buildMessageWithIcon(busCard, index, isUser);
-                } else if (msg["type"] == "airplane") {
-                  final airplaneCard = msg["data"] as AirplaneCard;
-                  return buildMessageWithIcon(airplaneCard, index, isUser);
-                } else if (msg["type"] == "amazon") {
-                  final amazonCard = msg["data"] as AmazonCard;
-                  return buildMessageWithIcon(amazonCard, index, isUser);
-                } else if (msg["type"] == "airbnb") {
-                  final airbnbCard = msg["data"] as AirbnbCard;
-                  return buildMessageWithIcon(airbnbCard, index, isUser);
-                } else if (msg["type"] == "booking") {
-                  final bookingCard = msg["data"] as BookingCard;
-                  return buildMessageWithIcon(bookingCard, index, isUser);
-                } else if (msg["type"] == "restaurant") {
-                  final restaurantCard = msg["data"] as RestaurantCard;
-                  return buildMessageWithIcon(restaurantCard, index, isUser);
-                } else if (msg["type"] == "fashion") {
-                  final fashionCard = msg["data"] as FashionShopping;
-                  return buildMessageWithIcon(fashionCard, index, isUser);
-                } else if (msg["type"] == "movieslist") {
-                  final movieslist = msg["data"] as MovieList;
-                  return buildMessageWithIcon(movieslist, index, isUser);
-                } else if (msg["type"] == "mtime") {
-                  final movietimes = msg["data"] as MoviesTimingCard;
-                  return buildMessageWithIcon(movietimes, index, isUser);
-                } else if (msg["type"] == "perplexity") {
-                  final perplexity = msg["data"] as PerplexityCard;
-                  return buildMessageWithIcon(perplexity, index, isUser);
-                } else if (msg["type"] == "uber") {
-                  final uberCard = msg["data"] as UberCard;
-                  return buildMessageWithIcon(uberCard, index, isUser);
+                    ).animate().fade(duration: 300.ms).slideX(
+                          begin: isUser ? 1 : -1,
+                        );
+                    return buildMessageWithIcon(bubble, index, isUser);
+                  case "bus":
+                    final busCard = msg["data"] as BusCard;
+                    return buildMessageWithIcon(busCard, index, isUser);
+                  case "airplane":
+                    final airplaneCard = msg["data"] as AirplaneCard;
+                    return buildMessageWithIcon(airplaneCard, index, isUser);
+                  case "amazon":
+                    final amazonCard = msg["data"] as AmazonCard;
+                    return buildMessageWithIcon(amazonCard, index, isUser);
+                  case "airbnb":
+                    final airbnbCard = msg["data"] as AirbnbCard;
+                    return buildMessageWithIcon(airbnbCard, index, isUser);
+                  case "booking":
+                    final bookingCard = msg["data"] as BookingCard;
+                    return buildMessageWithIcon(bookingCard, index, isUser);
+                  case "restaurant":
+                    final restaurantCard = msg["data"] as RestaurantCard;
+                    return buildMessageWithIcon(restaurantCard, index, isUser);
+                  case "fashion":
+                    final fashionCard = msg["data"] as FashionShopping;
+                    return buildMessageWithIcon(fashionCard, index, isUser);
+                  case "movieslist":
+                    final movieslist = msg["data"] as MovieList;
+                    return buildMessageWithIcon(movieslist, index, isUser);
+                  case "mtime":
+                    final movietimes = msg["data"] as MoviesTimingCard;
+                    return buildMessageWithIcon(movietimes, index, isUser);
+                  case "perplexity":
+                    final perplexity = msg["data"] as PerplexityCard;
+                    return buildMessageWithIcon(perplexity, index, isUser);
+                  case "uber":
+                    final uberCard = msg["data"] as UberCard;
+                    return buildMessageWithIcon(uberCard, index, isUser);
                 }
                 return const SizedBox.shrink();
               },
@@ -664,3 +665,4 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 }
+
