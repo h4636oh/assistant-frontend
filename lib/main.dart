@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'card/bus_card.dart';
@@ -70,10 +71,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   /// Sends the message to the server and waits for the reply.
   Future<dynamic> sendString(String message) async {
-    // final url = Uri.parse('https://mighty-sailfish-touched.ngrok-free.app'); // Piyush
-    // final url = Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Deepanshu
-    final url =
-        Uri.parse('https://just-mainly-monster.ngrok-free.app'); // Siddhanth
+    // final url = Uri.parse('http://localhost:3000'); // Localhost
+    final url = Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Deepanshu
+    // final url = Uri.parse('https://mighty-sailfish-touched.ngrok-free.app'); // Kabir
+    // final url = Uri.parse('https://just-mainly-monster.ngrok-free.app'); // Siddhanth
 
     _client = http.Client();
     try {
@@ -82,7 +83,8 @@ class _ChatScreenState extends State<ChatScreen> {
         url,
         // headers: {"Content-Type": "application/json"},
         // body: jsonEncode({"message": message, "history": history}),
-        headers: {'Content-Type': 'text/plain', 'Accept': 'application/json'},
+        headers: {'Content-Type': 'text/plain'},
+        // headers: {'Content-Type': 'text/plain', 'Accept': 'application/json'},
         body: history.toString(),
       )
           .timeout(
@@ -258,6 +260,56 @@ class _ChatScreenState extends State<ChatScreen> {
         );
       }
     });
+  }
+
+  Future<void> _sendImageToServer(XFile imageFile) async {
+    // final url = Uri.parse('http://localhost:3000'); // Localhost
+    final url = Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Deepasnhu
+
+    var request = http.MultipartRequest('POST', url);
+    request.files
+        .add(await http.MultipartFile.fromPath('image', imageFile.path));
+
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      var responseData = await response.stream.bytesToString();
+      setState(() {
+        messages.add({
+          "type": "text",
+          "text": "Image uploaded successfully!",
+          "sender": "bot",
+        });
+      });
+    } else {
+      setState(() {
+        messages.add({
+          "type": "text",
+          "text": "Failed to upload image.",
+          "sender": "bot",
+        });
+      });
+    }
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: source);
+
+    if (image != null) {
+      setState(() {
+        _isLoading = true;
+        messages.add({
+          "type": "image",
+          "imagePath": image.path, // Local path of the image
+          "sender": "user",
+        });
+        history.add({"role": "user", "content": "[Image Sent]"});
+      });
+
+      // Send the image to the server
+      await _sendImageToServer(image);
+    }
   }
 
   /// Adds Uber card messages.
@@ -536,13 +588,27 @@ class _ChatScreenState extends State<ChatScreen> {
                         ),
                         child: Text(
                           msg["text"].toString(),
-                          style: const TextStyle(color: Colors.white, fontSize: 20),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 20),
                         ),
                       ),
                     ).animate().fade(duration: 300.ms).slideX(
                           begin: isUser ? 1 : -1,
                         );
                     return buildMessageWithIcon(bubble, index, isUser);
+                  case "image":
+                    final imageWidget = ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: maxBubbleWidth,
+                        maxHeight: 250,
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Image.file(File(msg["imagePath"]),
+                            fit: BoxFit.cover),
+                      ),
+                    );
+                    return buildMessageWithIcon(imageWidget, index, isUser);
                   case "loading":
                     final bubble = ConstrainedBox(
                       constraints: BoxConstraints(maxWidth: maxBubbleWidth),
@@ -559,7 +625,8 @@ class _ChatScreenState extends State<ChatScreen> {
                             height: 24,
                             child: CircularProgressIndicator(
                               strokeWidth: 2.0,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
                             ),
                           ),
                         ),
@@ -612,6 +679,10 @@ class _ChatScreenState extends State<ChatScreen> {
               crossAxisAlignment: CrossAxisAlignment
                   .center, // Align items in the center vertically
               children: [
+                IconButton(
+                  icon: Icon(Icons.photo, color: Colors.white),
+                  onPressed: () => _pickImage(ImageSource.gallery),
+                ),
                 // TextField wrapped in SizedBox
                 Expanded(
                   child: SizedBox(
@@ -665,4 +736,3 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 }
-
