@@ -1,4 +1,4 @@
-J.A.R.V.I.S
+ATHENA
 ================
 
 This project is a comprehensive and innovative solution that leverages the power of Flutter to create a seamless and engaging user experience across multiple platforms. With a strong focus on modularity, scalability, and maintainability, this project is designed to meet the evolving needs of modern applications.
@@ -18,7 +18,7 @@ Getting Started
 
 To get started with this project, please follow these steps:
 
-1. Clone the repository using `git clone https://github.com/your-repo-name.git`
+1. Clone the repository using `git clone https://github.com/h4636oh/athena.git`
 2. Install the required dependencies using `flutter pub get`
 3. Run the application using `flutter run`
 
@@ -51,7 +51,6 @@ This project uses the following technologies and tools:
 
 * Flutter: A mobile app development framework created by Google
 * Dart: A programming language developed by Google
-* Xcode: A development environment for macOS and iOS
 * Android Studio: A development environment for Android
 * Visual Studio Code: A code editor and development environment
 
