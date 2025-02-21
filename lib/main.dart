@@ -72,7 +72,8 @@ class _ChatScreenState extends State<ChatScreen> {
   /// Sends the message to the server and waits for the reply.
   Future<dynamic> sendString(String message) async {
     // final url = Uri.parse('http://localhost:3000'); // Localhost
-    final url = Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Deepanshu
+    final url =
+        Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Deepanshu
     // final url = Uri.parse('https://mighty-sailfish-touched.ngrok-free.app'); // Kabir
     // final url = Uri.parse('https://just-mainly-monster.ngrok-free.app'); // Siddhanth
 
@@ -264,7 +265,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _sendImageToServer(XFile imageFile) async {
     // final url = Uri.parse('http://localhost:3000'); // Localhost
-    final url = Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Deepasnhu
+    final url =
+        Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Deepasnhu
 
     var request = http.MultipartRequest('POST', url);
     request.files
@@ -546,14 +548,16 @@ class _ChatScreenState extends State<ChatScreen> {
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontFamily: "nasa",
+              color: Colors.blueAccent,
               letterSpacing: 5,
               fontSize: 30),
         ),
         centerTitle: true,
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.grey[900],
         leading: IconButton(
-          icon: const Icon(Icons.replay_circle_filled_outlined,
-              color: Colors.white),
+          icon: const Icon(
+            Icons.replay_circle_filled_outlined,
+            color: Colors.grey),
           iconSize: 32,
           onPressed: () {
             setState(() {
@@ -677,17 +681,25 @@ class _ChatScreenState extends State<ChatScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment
-                  .center, // Align items in the center vertically
+                  .end, // Align items in the center vertically
               children: [
-                IconButton(
-                  icon: Icon(Icons.photo, color: Colors.white),
-                  onPressed: () => _pickImage(ImageSource.gallery),
+                // FloatingActionButton wrapped in a SizedBox
+                SizedBox(
+                  height: 56, // Match default FAB height
+                  width: 56, // Match default FAB width
+                  child: FloatingActionButton(
+                    backgroundColor: Colors.grey[900],
+                    onPressed: () => _pickImage(ImageSource.gallery),
+                    child: Icon(Icons.photo, color: Colors.white),
+                  ),
                 ),
+                const SizedBox(width: 8),
                 // TextField wrapped in SizedBox
                 Expanded(
-                  child: SizedBox(
-                    height:
-                        56, // Match FloatingActionButton's default height (56)
+                  child: Flexible(
+                  // child: SizedBox(
+                    // height:
+                    //     56, // Match FloatingActionButton's default height (56)
                     child: TextField(
                       controller: _controller,
                       focusNode: _focusNode,
@@ -695,6 +707,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       style: const TextStyle(color: Colors.white),
                       onSubmitted: (value) => _sendMessage(),
                       textInputAction: TextInputAction.send,
+                      maxLines: null, // Allow multiline expansion
                       decoration: InputDecoration(
                         hintText: "Ask something...",
                         hintStyle: const TextStyle(color: Colors.grey),
@@ -705,7 +718,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           borderSide: BorderSide.none,
                         ),
                         contentPadding: const EdgeInsets.symmetric(
-                          vertical: 20, // Adjust padding for better alignment
+                          vertical: 16, // Adjust padding for better alignment
                           horizontal: 12,
                         ),
                       ),
