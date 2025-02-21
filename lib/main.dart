@@ -44,8 +44,8 @@ class ChatApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: Colors.black,
-        primaryColor: Colors.blueAccent,
-        colorScheme: const ColorScheme.dark(primary: Colors.blueAccent),
+        primaryColor: Colors.purpleAccent,
+        colorScheme: const ColorScheme.dark(primary: Colors.purpleAccent),
       ),
       home: const ChatScreen(),
     );
@@ -479,7 +479,7 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.blueAccent,
+                color: Colors.purpleAccent,
               ),
               padding: const EdgeInsets.all(4.0),
               alignment: Alignment.center,
@@ -548,7 +548,7 @@ class _ChatScreenState extends State<ChatScreen> {
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontFamily: "nasa",
-              color: Colors.blueAccent,
+              color: Colors.purpleAccent,
               letterSpacing: 5,
               fontSize: 30),
         ),
@@ -556,7 +556,7 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: Colors.grey[900],
         leading: IconButton(
           icon: const Icon(
-            Icons.replay_circle_filled_outlined,
+            Icons.replay_rounded,
             color: Colors.grey),
           iconSize: 32,
           onPressed: () {
@@ -587,7 +587,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         margin: const EdgeInsets.symmetric(vertical: 4),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: isUser ? Colors.blueAccent : Colors.grey[800],
+                          color: isUser ? Colors.purpleAccent : Colors.grey[800],
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(
@@ -718,7 +718,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           borderSide: BorderSide.none,
                         ),
                         contentPadding: const EdgeInsets.symmetric(
-                          vertical: 16, // Adjust padding for better alignment
+                          vertical: 20, // Adjust padding for better alignment
                           horizontal: 12,
                         ),
                       ),
@@ -732,7 +732,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   width: 56, // Match default FAB width
                   child: FloatingActionButton(
                     backgroundColor:
-                        _isLoading ? Colors.red : Colors.blueAccent,
+                        _isLoading ? Colors.red : Colors.purpleAccent,
                     onPressed: _isLoading ? _cancelMessage : _sendMessage,
                     child: Icon(
                       _isLoading ? Icons.stop : Icons.send,
