@@ -7,6 +7,12 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:convert';
+
+// New imports for compression and file handling.
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
+
 import 'card/bus_card.dart';
 import 'card/airplane_card.dart';
 import 'card/airbnb_card.dart';
@@ -28,7 +34,8 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
   runApp(const ChatApp());
 }
@@ -72,10 +79,9 @@ class _ChatScreenState extends State<ChatScreen> {
   /// Sends the message to the server and waits for the reply.
   Future<dynamic> sendString(String message) async {
     // final url = Uri.parse('http://localhost:3000'); // Localhost
-    final url =
-        Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Deepanshu
+    // final url = Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Deepanshu
     // final url = Uri.parse('https://mighty-sailfish-touched.ngrok-free.app'); // Kabir
-    // final url = Uri.parse('https://just-mainly-monster.ngrok-free.app'); // Siddhanth
+    final url = Uri.parse('https://just-mainly-monster.ngrok-free.app'); // Siddhanth
 
     _client = http.Client();
     try {
@@ -182,11 +188,12 @@ class _ChatScreenState extends State<ChatScreen> {
     }
 
     List<Map<String, String>> responseData = [];
-    if (response["data"] is List) {
-      responseData = quoteKeysAndValues(response["data"]);
-    } else if (response["data"] is Map) {
-      responseData =
-          quoteKeysAndValues([response["data"]]); // Wrap it in a list
+    if (response is Map && response.containsKey ("data")) {
+      if (response["data"] is List) {
+        responseData = quoteKeysAndValues(response["data"]);
+      } else if (response["data"] is Map) {
+        responseData = quoteKeysAndValues([response["data"]]);
+      }
     }
 
     // If the request was canceled, _isLoading would be false.
@@ -201,49 +208,66 @@ class _ChatScreenState extends State<ChatScreen> {
 
     // Process the server response.
     setState(() {
-      switch (response["type"]) {
-        case "bus":
-          addBusCardsToMessages(responseData);
-          break;
-        case "airplane":
-          addAirplaneCardsToMessages(responseData);
-          break;
-        case "amazon":
-          addAmazonCardsToMessages(responseData);
-          break;
-        case "airbnb":
-          addAirbnbCardsToMessages(responseData);
-          break;
-        case "booking":
-          addBookingCardsToMessages(responseData);
-          break;
-        case "restaurant":
-          addRestaurantCardsToMessages(responseData);
-          break;
-        case "fashion":
-          addFashionShoppingCardsToMessages(responseData);
-          break;
-        case "movietime":
-          addMovieTimeingCardToMessages(responseData);
-          break;
-        case "movieslist":
-          addMoviesListCardsToMessages(responseData);
-          break;
-        case "perplexity":
-          addPerplexityCardsToMessages(responseData);
-          break;
-        case "uber":
-          addUberCardsToMessages(responseData);
-          break;
-        default:
-          // FIX: Extract "data" from the response map if available.
-          messages.add({
-            "type": "text",
-            "text": response is Map && response.containsKey("data")
-                ? response["data"]
-                : response.toString(),
-            "sender": "bot",
-          });
+      if (response is Map && response.containsKey("type")) {
+        List<Map<String, String>> formattedData = [];
+
+        if (response["data"] is List) {
+          formattedData = (response["data"] as List)
+              .whereType<Map<String, dynamic>>() // Ensure each item is a map
+              .map((item) => item.map((key, value) => MapEntry(key.toString(), value.toString())))
+              .toList();
+        }
+
+        switch (response["type"]) {
+          case "bus":
+            addBusCardsToMessages(responseData);
+            break;
+          case "airplane":
+            addAirplaneCardsToMessages(responseData);
+            break;
+          case "amazon":
+            addAmazonCardsToMessages(responseData);
+            break;
+          case "airbnb":
+            addAirbnbCardsToMessages(responseData);
+            break;
+          case "booking":
+            addBookingCardsToMessages(responseData);
+            break;
+          case "restaurant":
+            addRestaurantCardsToMessages(responseData);
+            break;
+          case "fashion":
+            addFashionShoppingCardsToMessages(responseData);
+            break;
+          case "movietime":
+            addMovieTimeingCardToMessages(responseData);
+            break;
+          case "movieslist":
+            addMoviesListCardsToMessages(responseData);
+            break;
+          case "perplexity":
+            addPerplexityCardsToMessages(responseData);
+            break;
+          case "uber":
+            addUberCardsToMessages(responseData);
+            break;
+          default:
+            // FIX: Extract "data" from the response map if available.
+            messages.add({
+              "type": "text",
+              "text": response.containsKey("data")
+                  ? response["data"]
+                  : response.toString(),
+              "sender": "bot",
+            });
+        }
+      } else {
+        messages.add({
+          "type": "text",
+          "text": response.toString(),
+          "sender": "bot",
+        });
       }
       _isLoading = false;
     });
@@ -263,37 +287,83 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+  /// Updated image upload function that compresses, encodes to Base64, and sends the image.
   Future<void> _sendImageToServer(XFile imageFile) async {
-    // final url = Uri.parse('http://localhost:3000'); // Localhost
-    final url =
-        Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Deepasnhu
+    File file = File(imageFile.path);
 
-    var request = http.MultipartRequest('POST', url);
-    request.files
-        .add(await http.MultipartFile.fromPath('image', imageFile.path));
-
-    var response = await request.send();
-
-    if (response.statusCode == 200) {
-      var responseData = await response.stream.bytesToString();
+    // Compress the image.
+    final tempDir = await getTemporaryDirectory();
+    final targetPath = path.join(
+      tempDir.absolute.path,
+      "temp_${DateTime.now().millisecondsSinceEpoch}.jpg",
+    );
+    XFile? compressedFile = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      targetPath,
+      quality: 80,
+    );
+    if (compressedFile == null) {
       setState(() {
         messages.add({
           "type": "text",
-          "text": "Image uploaded successfully!",
+          "text": "Failed to compress image.",
           "sender": "bot",
         });
       });
-    } else {
+      return;
+    }
+
+    // Encode the compressed image to Base64.
+    final bytes = await compressedFile.readAsBytes();
+    String base64Image = base64Encode(bytes);
+    String fileName = path.basename(compressedFile.path);
+
+    // Prepare JSON payload.
+    final body = jsonEncode({
+      "image": base64Image,
+      "name": fileName,
+    });
+
+    // Replace with your backend URL.
+    var url = Uri.parse('https://just-mainly-monster.ngrok-free.app/');
+    // final url = Uri.parse('https://stirred-bream-largely.ngrok-free.app'); // Deepanshu
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: body,
+      );
+      if (response.statusCode == 200) {
+        setState(() {
+          messages.add({
+            "type": "text",
+            "text": "Image uploaded successfully!",
+            "sender": "bot",
+          });
+        });
+      } else {
+        setState(() {
+          messages.add({
+            "type": "text",
+            "text":
+                "Failed to upload image. Status: ${response.statusCode}",
+            "sender": "bot",
+          });
+        });
+      }
+    } catch (e) {
       setState(() {
         messages.add({
           "type": "text",
-          "text": "Failed to upload image.",
+          "text": "Error during image upload: $e",
           "sender": "bot",
         });
       });
     }
   }
 
+  /// Picks an image and sends it to the server.
   Future<void> _pickImage(ImageSource source) async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: source);
@@ -303,14 +373,16 @@ class _ChatScreenState extends State<ChatScreen> {
         _isLoading = true;
         messages.add({
           "type": "image",
-          "imagePath": image.path, // Local path of the image
+          "imagePath": image.path,
           "sender": "user",
         });
         history.add({"role": "user", "content": "[Image Sent]"});
       });
 
-      // Send the image to the server
       await _sendImageToServer(image);
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
