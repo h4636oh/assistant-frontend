@@ -543,22 +543,33 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "ATHENA",
-          style: TextStyle(
+        title: Container(
+          padding: const EdgeInsets.symmetric(
+              horizontal: 10, vertical: 2), // More padding for pill shape
+          decoration: BoxDecoration(
+            color: Colors.grey[900], // Background color
+            borderRadius: BorderRadius.circular(50), // Pill shape effect
+          ),
+          child: const Text(
+            "ATHENA",
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               fontFamily: "nasa",
               color: Colors.purpleAccent,
               letterSpacing: 5,
-              fontSize: 30),
+              fontSize: 30,
+            ),
+          ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.grey[900],
+        backgroundColor: Colors.transparent, // Make AppBar transparent
+        elevation: 0, // Remove shadow for a clean look
         leading: IconButton(
           icon: const Icon(
             Icons.replay_rounded,
-            color: Colors.grey),
-          iconSize: 32,
+            color: Colors.grey,
+          ),
+          iconSize: 24,
           onPressed: () {
             setState(() {
               messages.clear();
@@ -585,9 +596,10 @@ class _ChatScreenState extends State<ChatScreen> {
                       constraints: BoxConstraints(maxWidth: maxBubbleWidth),
                       child: Container(
                         margin: const EdgeInsets.symmetric(vertical: 4),
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: isUser ? Colors.purpleAccent : Colors.grey[800],
+                          color:
+                              isUser ? Colors.purpleAccent : Colors.grey[800],
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(
@@ -697,7 +709,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 // TextField wrapped in SizedBox
                 Expanded(
                   child: Flexible(
-                  // child: SizedBox(
+                    // child: SizedBox(
                     // height:
                     //     56, // Match FloatingActionButton's default height (56)
                     child: TextField(
