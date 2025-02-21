@@ -10,12 +10,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  image_picker: ^1.1.2
+  flutter_image_compress: ^2.4.0
+  path_provider: ^2.1.5
+  path: ^1.9.0
   cupertino_icons: ^1.0.8
   flutter_animate: ^4.2.0  # For animations
   url_launcher: ^6.3.1
   flutter_launcher_icons: ^0.14.3
   http: ^1.3.0
-  image_picker: ^1.0.7
   
 flutter_launcher_icons:
   android: true
